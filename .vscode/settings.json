@@ -1,0 +1,11 @@
+{
+  "cSpell.words": [
+    "springframework"
+  ],
+  "commentTranslate.hover.enabled": false,
+  "java.format.settings.url": ".vscode/java-formatter.xml",
+  "java.project.sourcePaths": [],
+  "java.project.referencedLibraries": [],
+  "java.home": "C:\\Program Files\\Java\\jdk-17",
+  "java.debug.settings.onBuildFailureProceed": true
+}
