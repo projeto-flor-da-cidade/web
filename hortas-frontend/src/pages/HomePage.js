@@ -66,16 +66,18 @@ const HomePage = () => {
             <p className="text-recifeBlue font-bold mt-4 text-lg">{t("Encontre as hortas comunitárias mais próximas e conheça os espaços onde você pode plantar e colher alimentos saudáveis.")}</p>
             
             {/* Mapa */}
-            <MapContainer
-              center={[-8.0476, -34.8768]}
-              zoom={13}
-              className="map-container w-full h-96"
-            >
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              />
-            </MapContainer>
+            <div className="w-full h-96 mt-6">
+              <MapContainer
+                center={[-8.0476, -34.8768]}
+                zoom={13}
+                style={{ height: "100%", width: "100%" }}
+              >
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                />
+              </MapContainer>
+            </div>
 
             <Link to="/maps" className="mt-6 inline-block bg-recifeBlue text-white px-6 py-3 rounded-lg shadow-md hover:bg-recifeGold hover:text-recifeBlue transition duration-300">
               {t("Visite as Hortas")}
