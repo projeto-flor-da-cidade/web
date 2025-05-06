@@ -18,8 +18,7 @@ Este documento descreve como configurar e iniciar o projeto **Flor da Cidade Web
 1. Clone o repositório:
 
    ```bash
-   git clone https://github.com/seu-usuario/flor-da-cidade-web.git
-   cd flor-da-cidade-web/web-normal
+   git clone https://github.com/projeto-flor-da-cidade/web.git
    ```
 
 2. Instale dependências:
