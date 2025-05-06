@@ -22,8 +22,7 @@ Este projeto é a interface administrativa do sistema **Flor da Cidade**, desenv
 ### 1. Clone o repositório principal
 
 ```bash
-git clone https://github.com/seu-usuario/web.git
-cd web/web-admin
+git clone https://github.com/projeto-flor-da-cidade/web.gitn
 ````
 
 ### 2. Criação do projeto com Vite (caso ainda não exista)
@@ -132,19 +131,4 @@ npm run preview   # Serve build localmente
 ```bash
 node -v
 v18.x.x ou superior
-```
-
----
-
-## ✨ Autor
-
-Desenvolvido por \[Seu Nome] — contato: \[[seu-email@example.com](mailto:seu-email@example.com)]
-Repositório principal: [github.com/seu-usuario/web](https://github.com/seu-usuario/web)
-
----
-
-```
-
-Você pode colar esse conteúdo direto no arquivo `web-admin/README.md`.  
-Se quiser, posso gerar e te entregar ele como arquivo `.md`. Deseja o download também?
 ```
