@@ -13,8 +13,6 @@ Este projeto é a interface administrativa do sistema **Flor da Cidade**, desenv
 - [Vite](https://vitejs.dev/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Axios](https://axios-http.com/)
-- [Java Spring Boot (API externa)](https://spring.io/projects/spring-boot)
-
 ---
 
 ## 🛠️ Instalação e Setup
