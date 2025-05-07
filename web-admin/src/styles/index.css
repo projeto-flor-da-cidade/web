@@ -1,0 +1,11 @@
+/* src/styles/index.css */
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Open+Sans:wght@400;600&family=Poppins:wght@400;600&display=swap');
+@import "tailwindcss";
+
+:root {
+  --font-anton: 'Anton', sans-serif;
+  --font-open-sans: 'Open Sans', sans-serif;
+  --font-poppins: 'Poppins', sans-serif;
+}
+
+/* Remova quaisquer outros imports ou estilos globais conflitantes */
