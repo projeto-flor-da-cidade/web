@@ -1,11 +1,16 @@
 /* src/styles/index.css */
+
+/* 1) Import de Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Open+Sans:wght@400;600&family=Poppins:wght@400;600&display=swap');
+
+/* 2) Import único do Tailwind v4 */
 @import "tailwindcss";
 
+/* 3) Variáveis globais */
 :root {
-  --font-anton: 'Anton', sans-serif;
+  --font-anton:    'Anton', sans-serif;
   --font-open-sans: 'Open Sans', sans-serif;
-  --font-poppins: 'Poppins', sans-serif;
+  --font-poppins:  'Poppins', sans-serif;
 }
 
-/* Remova quaisquer outros imports ou estilos globais conflitantes */
+/* Se quiser adicionar estilos adicionais, faça dentro de um seletor ou at-rule válido */
