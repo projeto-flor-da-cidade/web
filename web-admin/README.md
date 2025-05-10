@@ -1,53 +1,95 @@
+# 🌻 Flor da Cidade – Web Admin
 
+Este repositório contém o **painel administrativo** (`web-admin`) do projeto **Flor da Cidade**, desenvolvido com foco em tecnologias modernas para interfaces web.
 
-````
-# 🌼 Flor da Cidade - Web Admin
+## ✨ Descrição
 
-Este projeto é a interface administrativa do sistema **Flor da Cidade**, desenvolvida com **React.js**, **Vite**, **Tailwind CSS** e **Axios**. Ele se conecta a uma API backend feita em **Java Spring Boot**.
+**Parte web-admin do projeto Flor da Cidade**, utilizando:
+- [React.js](https://reactjs.org/) – Biblioteca para criação de interfaces declarativas.
+- [Vite](https://vitejs.dev/) – Build tool ultrarrápida para projetos front-end.
+- [Tailwind CSS](https://tailwindcss.com/) – Framework CSS utilitário para estilização rápida.
+- [Axios](https://axios-http.com/) – Cliente HTTP baseado em Promises.
+- [React Router DOM](https://reactrouter.com/) – Roteamento SPA (Single Page Application).
+- [Context API] – Gerenciamento leve de estado global.
+- [React Icons](https://react-icons.github.io/react-icons/) – Biblioteca de ícones SVG integrados ao React.
 
----
-
-## ⚙️ Tecnologias Utilizadas
-
-- [React.js](https://reactjs.org/)
-- [Vite](https://vitejs.dev/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Axios](https://axios-http.com/)
----
-
-## 🛠️ Instalação e Setup
-
-### 1. Clone o repositório principal
+## 📁 Estrutura de Pastas
 
 ```bash
-git clone https://github.com/projeto-flor-da-cidade/web.gitn
-````
-
-### 2. Criação do projeto com Vite (caso ainda não exista)
-
-```bash
-npm create vite@latest . -- --template react
+Web/
+└── web-admin/
+    ├── public/              # Arquivos públicos (favicon, index.html)
+    ├── src/
+    │   ├── assets/          # Imagens, logos, ícones, etc.
+    │   ├── components/      # Componentes reutilizáveis (botões, modais, inputs...)
+    │   ├── contexts/        # Contexts de estado global (ex: AuthContext)
+    │   ├── hooks/           # Hooks personalizados (ex: useAuth, useFetch)
+    │   ├── modules/         # Funcionalidades principais da aplicação (páginas)
+    │   ├── services/        # Requisições HTTP (com Axios)
+    │   ├── styles/          # CSS global e configurações do Tailwind
+    │   ├── utils/           # Funções auxiliares
+    │   ├── App.jsx          # Componente principal com rotas
+    │   └── main.jsx         # Arquivo de entrada (renderização React)
+    ├── .env                 # Variáveis de ambiente
+    ├── index.html           # HTML base do Vite
+    ├── tailwind.config.js   # Configurações Tailwind
+    ├── postcss.config.js    # Configurações do PostCSS
+    └── package.json         # Dependências e scripts
 ```
 
-### 3. Instale as dependências
+## 🧱 Pré-requisitos
+
+Antes de iniciar o projeto, instale:
+
+- **[Node.js](https://nodejs.org/)** (v18+ recomendado)
+- **[Git](https://git-scm.com/)**
+
+Verifique se Node e npm estão instalados:
+
+```bash
+node -v
+npm -v
+```
+
+## 🚀 Instalação do Projeto
+
+### 1. Clone o repositório
+
+```bash
+git clone https://github.com/seu-usuario/Web.git
+cd Web/web-admin
+```
+
+### 2. Instale as dependências
 
 ```bash
 npm install
 ```
 
-### 4. Instale Tailwind CSS e configure
+Instalações que estão incluídas no `package.json`:
 
-```bash
-npm install -D tailwindcss postcss autoprefixer @tailwindcss/postcss
-npx tailwindcss init -p
-```
+| Pacote               | Função                                      |
+|----------------------|---------------------------------------------|
+| `react`              | Biblioteca principal                        |
+| `react-dom`          | Renderização de componentes                 |
+| `vite`               | Dev server e build tool                     |
+| `tailwindcss`        | Framework CSS utilitário                    |
+| `postcss` / `autoprefixer` | Suporte ao Tailwind                     |
+| `axios`              | Requisições HTTP                            |
+| `react-router-dom`   | Roteamento SPA                              |
+| `react-icons`        | Ícones SVG prontos para React              |
+| `classnames` (opcional) | Manipulação condicional de classes CSS |
 
-#### Configure o `tailwind.config.cjs`:
+## 🛠️ Configuração do Tailwind CSS
+
+O Tailwind já está pré-configurado no projeto. Confira se os seguintes arquivos existem:
+
+### 📄 `tailwind.config.js`
 
 ```js
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {},
   },
@@ -55,7 +97,18 @@ export default {
 }
 ```
 
-#### Atualize `src/index.css`:
+### 📄 `postcss.config.js`
+
+```js
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+```
+
+### 📄 `src/styles/index.css`
 
 ```css
 @tailwind base;
@@ -63,70 +116,53 @@ export default {
 @tailwind utilities;
 ```
 
-### 5. Instale Axios
+Esse arquivo deve ser importado no `main.jsx`:
 
-```bash
-npm install axios
+```js
+import './styles/index.css';
 ```
 
----
+## 🔐 Variáveis de Ambiente
 
-## 🔐 Configuração do `.env`
-
-Crie um arquivo `.env` na raiz do projeto com:
+Crie um arquivo `.env` na raiz de `web-admin/` com as seguintes variáveis:
 
 ```env
-VITE_API_URL=http://localhost:8080/api
+VITE_API_URL=http://localhost:3000/api
 ```
 
-> Substitua a URL conforme sua API real.
+> ⚠️ Nunca versionar esse arquivo (`.env` está no `.gitignore` por padrão)
 
----
+## 💻 Comandos Principais
 
-## 🧩 Estrutura de Pastas
+| Comando                        | Função                                  |
+|-------------------------------|------------------------------------------|
+| `npm run dev`                 | Inicia servidor de desenvolvimento       |
+| `npm run build`               | Gera o build de produção (`/dist`)       |
+| `npm run preview`             | Visualiza o build em ambiente local      |
+| `npm install`                 | Instala as dependências listadas         |
 
-```bash
-src/
-├── modules/            # Recursos organizados por funcionalidade (Feature-based)
-│   └── Home/
-│       ├── components/ # Componentes da página Home
-│       ├── hooks/      # Hooks relacionados à Home
-│       ├── services/   # API da Home
-│       ├── styles/     # Estilos locais (ex: home.module.css)
-│       └── Home.jsx    # Componente principal da rota
-├── components/         # Componentes reutilizáveis globais
-├── contexts/           # Contextos React globais
-├── hooks/              # Hooks reutilizáveis globais
-├── services/           # Serviços globais de API
-├── styles/             # Estilos globais e reset
-├── App.jsx
-└── main.jsx
-```
+## 🧩 Extensões recomendadas (VS Code)
 
----
+- **ESLint** – Linting automático para JS/React
+- **Prettier** – Formatação automática de código
+- **Tailwind CSS IntelliSense** – Autocompletar classes do Tailwind
+- **React Developer Tools** – Inspeção de componentes React (browser)
+- **DotENV** – Suporte a arquivos `.env`
 
-## 🚀 Scripts disponíveis
+## ✅ Checklist de Boas Práticas
 
-```bash
-npm run dev       # Inicia o servidor de desenvolvimento
-npm run build     # Gera build de produção
-npm run preview   # Serve build localmente
-```
+- [x] Componentes organizados por função
+- [x] Lógica de API separada em `services/`
+- [x] Hooks reutilizáveis em `hooks/`
+- [x] Contextos globais com `contexts/`
+- [x] Estilização usando classes Tailwind
+- [x] Separação clara entre lógica e apresentação
 
----
+## 📌 Observações
 
-## 💡 Extensões recomendadas no VS Code
+- Em caso de dúvidas ou erros, **verifique se o `.env` está criado corretamente** e se a API (backend) está rodando.
+- Este projeto é **modular** e pode ser expandido facilmente adicionando novas pastas em `modules/`.
 
-* **ESLint**: análise de código
-* **Prettier**: formatação automática
-* **Tailwind CSS IntelliSense**: autocompletar e highlight para Tailwind
-* **React Developer Tools** (Chrome extension)
+## 📞 Suporte
 
----
-
-## 📦 Versão do Node recomendada
-
-```bash
-node -v
-v18.x.x ou superior
-```
+Qualquer dúvida: **falar com os scrums ou líder de grupo**.
