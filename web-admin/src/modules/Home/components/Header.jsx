@@ -14,7 +14,7 @@ const headerMenu = [
   {
     label: 'Consultas',
     items: [
-      { name: 'Hortas Ativas', to: '#', enabled: false },
+      { name: 'Hortas Ativas', to: '/tela-de-cursos-ativos', enabled: true },
       { name: 'Cursos Ativos', to: '#', enabled: false },
       { name: 'Registros de Solicitações', to: '#', enabled: false },
       { name: 'Registros de Cursos', to: '#', enabled: false },
