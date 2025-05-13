@@ -6,6 +6,7 @@ import Home from './modules/Home/Home'
 import TelaDeDescricaoDeSolicitacaoHortas from './modules/Solicitacoes/TelaDeDescricaoDeSolicitacaoHortas'
 import TelaDeCadastroDeCurso from './modules/Solicitacoes/cursos/TelaDeCadastroDeCurso'
 import TelaDeCursosAtivos from './modules/Solicitacoes/cursos/TelaDeCursosAtivos'
+import TelaDeEdicaoDeCursos from './modules/Solicitacoes/cursos/TelaDeEdicaoDeCursos'
 
 function Layout() {
   return (
@@ -40,6 +41,12 @@ export default function App() {
         <Route
           path="tela-de-cursos-ativos"
           element={<TelaDeCursosAtivos />}
+        />
+
+        {/* Rota de edição de cursos */}
+        <Route
+          path="tela-de-edicao-de-cursos"
+          element={<TelaDeEdicaoDeCursos />}
         />
 
         {/* Qualquer outro caminho volta para Home */}

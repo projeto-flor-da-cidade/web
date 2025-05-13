@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../../Home/components/Header';
 import SearchIcon from '../../../assets/search-circle-outline.svg';
 import ChevronDown from '../../../assets/chevron-down-outline.svg';
@@ -14,6 +15,7 @@ const initialCursos = [
 const STATUS_OPTIONS = ['Online', 'Presencial', 'Híbrido', 'Desativado'];
 
 const TelaDeCursosAtivos = () => {
+  const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('Data');
   const [expandedId, setExpandedId] = useState(null);
@@ -28,15 +30,11 @@ const TelaDeCursosAtivos = () => {
       return 0;
     });
 
-  const toggleExpand = (id) => {
-    setExpandedId(expandedId === id ? null : id);
-  };
+  const toggleExpand = (id) => setExpandedId(expandedId === id ? null : id);
 
   const handleStatusChange = (id, newStatus) => {
     setCursos(cursos.map(c => c.id === id ? { ...c, status: newStatus } : c));
   };
-
-  const handleBack = () => window.history.back();
 
   return (
     <div className="min-h-screen bg-gray-100 font-poppins">
@@ -44,10 +42,8 @@ const TelaDeCursosAtivos = () => {
         <Header />
       </div>
       <main className="container mx-auto p-6 pt-20">
-        {/* Título */}
         <h1 className="text-[32.6px] font-semibold mb-6">Cursos ativos</h1>
 
-        {/* Busca e Ordenar */}
         <section className="flex flex-col md:flex-row md:items-center mb-6 space-y-4 md:space-y-0 md:space-x-6">
           <div className="flex items-center w-full md:w-1/2 border rounded-md px-4 h-12">
             <input
@@ -73,7 +69,6 @@ const TelaDeCursosAtivos = () => {
           </div>
         </section>
 
-        {/* Lista de cursos */}
         <section className="space-y-4">
           {filtered.map(curso => (
             <div key={curso.id} className="bg-white border rounded-md hover:shadow-md transition-shadow duration-200">
@@ -86,13 +81,15 @@ const TelaDeCursosAtivos = () => {
                   <select
                     value={curso.status}
                     onChange={e => handleStatusChange(curso.id, e.target.value)}
-                    className="text-base border-none focus:outline-none bg-transparent cursor-pointer flex items-center"
+                    className="text-base border-none focus:outline-none bg-transparent cursor-pointer"
                   >
-                    {STATUS_OPTIONS.map(opt => (
-                      <option key={opt}>{opt}</option>
-                    ))}
+                    {STATUS_OPTIONS.map(opt => <option key={opt}>{opt}</option>)}
                   </select>
-                  <img src={ChevronDown} alt="Expandir" className={`w-6 h-6 transform ${expandedId === curso.id ? 'rotate-180' : ''} transition-transform duration-200`} />
+                  <img
+                    src={ChevronDown}
+                    alt="Expandir"
+                    className={`w-6 h-6 transform ${expandedId === curso.id ? 'rotate-180' : ''} transition-transform duration-200`}
+                  />
                 </div>
               </button>
 
@@ -101,8 +98,8 @@ const TelaDeCursosAtivos = () => {
                   <div className="flex justify-between items-center">
                     <span className="text-base">Período de inscrição: {curso.period}</span>
                     <button
-                      onClick={handleBack}
-                      className="p-2 bg-gray-100 rounded-full hover:bg-gray-700 transition-colors duration-200"
+                      onClick={() => navigate('/tela-de-edicao-de-cursos', { state: curso })}
+                      className="p-2 bg-white-800 rounded-full hover:bg-green-700 transition-colors duration-200"
                     >
                       <img src={PencilIcon} alt="Editar" className="w-6 h-6 text-white" />
                     </button>
