@@ -4,6 +4,7 @@ import { Routes, Route, Outlet, Navigate } from 'react-router-dom'
 import Header from './modules/Home/components/Header'
 import Home from './modules/Home/Home'
 import TelaDeDescricaoDeSolicitacaoHortas from './modules/Solicitacoes/TelaDeDescricaoDeSolicitacaoHortas'
+import TelaDeCadastroDeCurso from './modules/Solicitacoes/cursos/TelaDeCadastroDeCurso'
 
 function Layout() {
   return (
@@ -26,6 +27,12 @@ export default function App() {
         <Route
           path="tela-de-descricao-de-solicitacao-hortas"
           element={<TelaDeDescricaoDeSolicitacaoHortas />}
+        />
+
+        {/* Rota de cadastro de curso */}
+        <Route
+          path="tela-de-cadastro-de-curso"
+          element={<TelaDeCadastroDeCurso />}
         />
 
         {/* Qualquer outro caminho volta para Home */}
