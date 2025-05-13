@@ -1,7 +1,14 @@
+// src/main.jsx
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import '../src/styles/index.css'   // <-- só este, que importa o Tailwind
+import { BrowserRouter } from 'react-router-dom'
 import App from './App'
+import './styles/index.css'    // importa o CSS global aqui
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App />)
-
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>
+)
