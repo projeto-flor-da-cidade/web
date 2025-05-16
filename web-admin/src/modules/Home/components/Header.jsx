@@ -7,7 +7,7 @@ const headerMenu = [
   {
     label: 'Serviços',
     items: [
-      { name: 'Solicitações de Hortas', to: '/tela-de-descricao-de-solicitacao-hortas', enabled: true },
+      { name: 'Solicitações de Hortas', to: '/tela-de-solicitacao-hortas', enabled: true },
       { name: 'Cadastro de Cursos', to: '/tela-de-cadastro-de-curso', enabled: true },
     ],
   },

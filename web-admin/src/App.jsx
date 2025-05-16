@@ -3,6 +3,7 @@ import React from 'react'
 import { Routes, Route, Outlet, Navigate } from 'react-router-dom'
 import Header from './modules/Home/components/Header'
 import Home from './modules/Home/Home'
+import TelaDeSolicitacaoHortas from './modules/Solicitacoes/TelaDeSolicitacaoHortas'
 import TelaDeDescricaoDeSolicitacaoHortas from './modules/Solicitacoes/TelaDeDescricaoDeSolicitacaoHortas'
 import TelaDeCadastroDeCurso from './modules/Solicitacoes/cursos/TelaDeCadastroDeCurso'
 import TelaDeCursosAtivos from './modules/Solicitacoes/cursos/TelaDeCursosAtivos'
@@ -24,6 +25,12 @@ export default function App() {
       <Route path="/" element={<Layout />}>
         {/* Rota HOME: exatamente no caminho "/" */}
         <Route index element={<Home />} />
+
+         {/* Rota de solicitação de horta */}
+        <Route
+          path="tela-de-solicitacao-hortas"
+          element={<TelaDeSolicitacaoHortas />}
+        />
 
         {/* Rota de descrição */}
         <Route
