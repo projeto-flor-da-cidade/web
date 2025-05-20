@@ -1,12 +1,13 @@
 // src/App.jsx
-import React from 'react'
-import { Routes, Route, Outlet, Navigate } from 'react-router-dom'
-import Header from './modules/Home/components/Header'
-import Home from './modules/Home/Home'
-import TelaDeDescricaoDeSolicitacaoHortas from './modules/Solicitacoes/TelaDeDescricaoDeSolicitacaoHortas'
-import TelaDeCadastroDeCurso from './modules/Solicitacoes/cursos/TelaDeCadastroDeCurso'
-import TelaDeCursosAtivos from './modules/Solicitacoes/cursos/TelaDeCursosAtivos'
-import TelaDeEdicaoDeCursos from './modules/Solicitacoes/cursos/TelaDeEdicaoDeCursos'
+import React from "react";
+import { Routes, Route, Outlet, Navigate } from "react-router-dom";
+import Header from "./modules/Home/components/Header";
+import Home from "./modules/Home/Home";
+import TelaDeDescricaoDeSolicitacaoHortas from "./modules/Solicitacoes/TelaDeDescricaoDeSolicitacaoHortas";
+import TelaDeCadastroDeCurso from "./modules/Solicitacoes/cursos/TelaDeCadastroDeCurso";
+import TelaDeCursosAtivos from "./modules/Solicitacoes/cursos/TelaDeCursosAtivos";
+import TelaDeEdicaoDeCursos from "./modules/Solicitacoes/cursos/TelaDeEdicaoDeCursos";
+import TelaHortasAtivas from "./modules/Solicitacoes/hortas/hortasAtivas";
 
 function Layout() {
   return (
@@ -14,7 +15,7 @@ function Layout() {
       <Header />
       <Outlet />
     </div>
-  )
+  );
 }
 
 export default function App() {
@@ -38,10 +39,7 @@ export default function App() {
         />
 
         {/* Rota de cursos ativos */}
-        <Route
-          path="tela-de-cursos-ativos"
-          element={<TelaDeCursosAtivos />}
-        />
+        <Route path="tela-de-cursos-ativos" element={<TelaDeCursosAtivos />} />
 
         {/* Rota de edição de cursos */}
         <Route
@@ -49,9 +47,12 @@ export default function App() {
           element={<TelaDeEdicaoDeCursos />}
         />
 
+        {/* Rota de edição de cursos */}
+        <Route path="tela-hortas-ativas" element={<TelaHortasAtivas />} />
+
         {/* Qualquer outro caminho volta para Home */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
-  )
+  );
 }
