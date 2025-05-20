@@ -8,6 +8,7 @@ import TelaDeDescricaoDeSolicitacaoHortas from './modules/Solicitacoes/TelaDeDes
 import TelaDeCadastroDeCurso from './modules/Solicitacoes/cursos/TelaDeCadastroDeCurso'
 import TelaDeCursosAtivos from './modules/Solicitacoes/cursos/TelaDeCursosAtivos'
 import TelaDeEdicaoDeCursos from './modules/Solicitacoes/cursos/TelaDeEdicaoDeCursos'
+import TelaHortasAtivas from './modules/Solicitacoes/hortas/hortasAtivas'
 
 function Layout() {
   return (
@@ -23,10 +24,10 @@ export default function App() {
     <Routes>
       {/* Rota pai com Header e Outlet */}
       <Route path="/" element={<Layout />}>
-        {/* Rota HOME: exatamente no caminho "/" */}
+        {/* Rota HOME */}
         <Route index element={<Home />} />
 
-         {/* Rota de solicitação de horta */}
+        {/* Rota de solicitação de horta */}
         <Route
           path="tela-de-solicitacao-hortas"
           element={<TelaDeSolicitacaoHortas />}
@@ -54,6 +55,12 @@ export default function App() {
         <Route
           path="tela-de-edicao-de-cursos"
           element={<TelaDeEdicaoDeCursos />}
+        />
+
+        {/* Rota de hortas ativas */}
+        <Route
+          path="tela-hortas-ativas"
+          element={<TelaHortasAtivas />}
         />
 
         {/* Qualquer outro caminho volta para Home */}
