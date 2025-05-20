@@ -9,7 +9,7 @@ const headerMenu = [
     items: [
       {
         name: "Solicitações de Hortas",
-        to: "/tela-de-descricao-de-solicitacao-hortas",
+        to: "/tela-de-solicitacao-hortas",
         enabled: true,
       },
       {
