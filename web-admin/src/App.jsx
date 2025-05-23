@@ -8,7 +8,7 @@ import TelaDeDescricaoDeSolicitacaoHortas from './modules/Solicitacoes/TelaDeDes
 import TelaDeCadastroDeCurso from './modules/Solicitacoes/cursos/TelaDeCadastroDeCurso'
 import TelaDeCursosAtivos from './modules/Solicitacoes/cursos/TelaDeCursosAtivos'
 import TelaDeEdicaoDeCursos from './modules/Solicitacoes/cursos/TelaDeEdicaoDeCursos'
-import TelaHortasAtivas from './modules/Solicitacoes/hortas/hortasAtivas'
+import TelaHortasAtivas from './modules/Solicitacoes/hortas/TelaHortasAtivas'
 
 function Layout() {
   return (

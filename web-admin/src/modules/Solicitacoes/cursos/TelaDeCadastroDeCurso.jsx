@@ -132,7 +132,6 @@ const TelaDeCadastroDeCurso = () => {
               onChange={e => setPublicoAlvo(e.target.value)}
               className="w-full h-12 px-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
             >
-              <option>Geral</option>
               <option>Interno</option>
               <option>Comunidade</option>
               <option>Estudantes</option>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import img1 from '../../assets/ordem.jpg';
-import img2 from '../../assets/ordem2.jpg';
-import img3 from '../../assets/ordem3.jpg';
+import img1 from '../../assets/horta_arnaldo.jpg';
+import img2 from '../../assets/horta2.jpg';
+import img3 from '../../assets/horta3.jpg';
 import calendarIcon from '../../assets/calendar-outline.svg';
 import checkIcon from '../../assets/checkmark-circle-outline.svg';
 import closeIcon from '../../assets/close-outline.svg';
@@ -114,11 +114,8 @@ export default function TelaDeDescricaoDeSolicitacaoHortas() {
             <h2 className="font-semibold text-[16px] mt-4">Características do grupo interessado:</h2>
             <div className="mt-2 w-full bg-white p-4 rounded-lg border-2 border-gray-400 text-[16px] h-80 overflow-y-auto">
               {/* Conteúdo */}
-              O "Suvaco Seco" era mais do que um simples bar; era um ponto de encontro e refúgio para os Gaudérios Abutres, um grupo de motoqueiros com quem Ivete tinha uma forte ligação desde a fundação do grupo. Ela era considerada uma amiga leal e uma figura importante para eles.
+              A horta do seu Arnaldo ocupa um espaço ensolarado no quintal, delimitado por canteiros de madeira rústica. Trata-se de uma horta orgânica, livre de agrotóxicos, onde o solo é constantemente enriquecido com composto caseiro. Entre os filetes de terra, crescem alfaces crespa e americana, formando cachos verdes e viçosos. Nos canteiros centrais, despontam pés de tomate-cereja que produzem frutos doces em abundância. Ao redor, ervas aromáticas como manjericão, hortelã e alecrim perfumam o ambiente e atraem polinizadores. Em linhas bem alinhadas, cenouras e beterrabas colorem a terra de laranja e púrpura, mostrando seu desenvolvimento lento mas constante. Arnaldo também reserva vasos elevados para pimentões que variam do verde ao vermelho, conferindo contraste às folhas. Para garantir a irrigação eficiente, ele instalou um sistema de gotejamento conectado a um pequeno reservatório que acumula água da chuva. Nos meses mais frios, a horta recebe uma cobertura de lona transparente, funcionando como uma mini-estufa que protege as plantas. Com dedicação diária, regas suaves e adubação natural, a horta do seu Arnaldo reflete amor à terra e um compromisso com a vida saudável.
 
-                O nome peculiar do bar, "Suvaco Seco", não tem uma explicação detalhada dentro da narrativa, mas ele evoca uma imagem rústica e talvez um tanto inusitada, condizente com a atmosfera de um bar de motoqueiros em uma cidade menor. O nome se tornou icônico entre os fãs de "Ordem Paranormal", representando esse local específico e a personagem da Ivete.
-
-            Após os eventos traumáticos ocorridos em Carpazinha, e restando apenas Arthur Cervero como sua família, Ivete se junta ao grupo da Ordo Realitas. O "Suvaco Seco" original em Carpazinha deixa de ser seu ponto principal, mas o nome é posteriormente homenageado quando a Ordo Realitas estabelece sua base secreta em São Paulo sob um bar com o mesmo nome.
             </div>
           </div>
         </div>
