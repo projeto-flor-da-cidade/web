@@ -1,24 +1,39 @@
 // src/modules/TelaDeLoginAdmin.jsx
-import { useState } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import eyeOutline from '../assets/eye-outline.svg'
+import { AuthContext } from '../context/AuthContext'   // 1) importar contexto
 
 export default function TelaDeLoginAdmin() {
   const [usuario, setUsuario] = useState('01458479')
   const [senha, setSenha] = useState('')
   const [mostrarSenha, setMostrarSenha] = useState(false)
+
+  const { login, error, user, loading } = useContext(AuthContext)  // 2) usar contexto
   const navigate = useNavigate()
 
+  // 3) se já estiver logado, vai direto para /app/home
+  useEffect(() => {
+    if (!loading && user) {
+      navigate('/app/home', { replace: true })
+    }
+  }, [loading, user, navigate])
+
   const handleUsuarioChange = (e) => {
-    // filtra apenas dígitos e limita a 8 caracteres
     const valor = e.target.value.replace(/\D/g, '').slice(0, 8)
     setUsuario(valor)
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // aqui você pode validar credenciais antes de navegar
-    navigate('/app/home', { replace: true })
+    if (usuario.length !== 8) return  // só prossegue se tiver 8 dígitos
+
+    const sucesso = await login(usuario, senha)  // 4) chama login()
+    if (!sucesso) {
+      // se falhou, a variável `error` do contexto será preenchida
+      return
+    }
+    // se passar, o useEffect acima faz o redirect
   }
 
   return (
@@ -27,7 +42,6 @@ export default function TelaDeLoginAdmin() {
         className="bg-white rounded-lg shadow-lg flex flex-col items-center p-8"
         style={{ width: '440.3px', height: '549.5px' }}
       >
-        {/* Título */}
         <h1 className="text-5xl mb-8 text-center">
           <span className="block font-poppins font-semibold text-[#60855f]">
             Flor da Cidade
@@ -37,10 +51,15 @@ export default function TelaDeLoginAdmin() {
           </span>
         </h1>
 
-        {/* Formulário */}
+        {/* 5) Exibe erro abaixo do título */}
+        {error && (
+          <div className="mb-4 text-red-600 font-nunito">
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="w-full flex-1 flex flex-col justify-between">
           <div className="space-y-6 flex-1 flex flex-col justify-center">
-            {/* Usuário */}
             <label className="block font-nunito text-gray-700">
               Usuário
               <input
@@ -54,7 +73,6 @@ export default function TelaDeLoginAdmin() {
               />
             </label>
 
-            {/* Senha */}
             <label className="block font-nunito text-gray-700 relative">
               Senha
               <input
@@ -77,7 +95,6 @@ export default function TelaDeLoginAdmin() {
               </button>
             </label>
 
-            {/* Botão Entrar */}
             <button
               type="submit"
               className="w-full py-3 rounded font-nunito font-semibold text-white bg-[#60855f] hover:bg-[#4e6e52] transition-colors"
@@ -86,7 +103,6 @@ export default function TelaDeLoginAdmin() {
             </button>
           </div>
 
-          {/* Esqueci minha senha */}
           <div className="text-center mt-6">
             <Link
               to="/esqueci-senha"
