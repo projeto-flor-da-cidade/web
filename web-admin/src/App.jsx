@@ -1,6 +1,7 @@
 // src/App.jsx
 import React from 'react'
 import { Routes, Route, Outlet, Navigate } from 'react-router-dom'
+
 import Header from './modules/Home/components/Header'
 import Home from './modules/Home/Home'
 import TelaDeSolicitacaoHortas from './modules/Solicitacoes/TelaDeSolicitacaoHortas'
@@ -9,8 +10,9 @@ import TelaDeCadastroDeCurso from './modules/Solicitacoes/cursos/TelaDeCadastroD
 import TelaDeCursosAtivos from './modules/Solicitacoes/cursos/TelaDeCursosAtivos'
 import TelaDeEdicaoDeCursos from './modules/Solicitacoes/cursos/TelaDeEdicaoDeCursos'
 import TelaHortasAtivas from './modules/Solicitacoes/hortas/TelaHortasAtivas'
+import TelaDeLoginAdmin from './modules/TelaDeLoginAdmin'
 
-function Layout() {
+function ProtectedLayout() {
   return (
     <div className="flex flex-col h-screen w-full">
       <Header />
@@ -22,50 +24,29 @@ function Layout() {
 export default function App() {
   return (
     <Routes>
-      {/* Rota pai com Header e Outlet */}
-      <Route path="/" element={<Layout />}>
-        {/* Rota HOME */}
-        <Route index element={<Home />} />
+      {/* 1) Raiz ("/") leva direto ao Login */}
+      <Route path="/" element={<TelaDeLoginAdmin />} />
 
-        {/* Rota de solicitação de horta */}
-        <Route
-          path="tela-de-solicitacao-hortas"
-          element={<TelaDeSolicitacaoHortas />}
-        />
+      {/* 2) Depois de logar, o usuário deve navegar para /app/* */}
+      <Route path="/app" element={<ProtectedLayout />}>
+        {/* index aqui já cai em /app/home */}
+        <Route index element={<Navigate to="home" replace />} />
 
-        {/* Rota de descrição */}
-        <Route
-          path="tela-de-descricao-de-solicitacao-hortas"
-          element={<TelaDeDescricaoDeSolicitacaoHortas />}
-        />
+        {/* Rotas internas protegidas */}
+        <Route path="home" element={<Home />} />
+        <Route path="tela-de-solicitacao-hortas" element={<TelaDeSolicitacaoHortas />} />
+        <Route path="tela-de-descricao-de-solicitacao-hortas" element={<TelaDeDescricaoDeSolicitacaoHortas />} />
+        <Route path="tela-de-cadastro-de-curso" element={<TelaDeCadastroDeCurso />} />
+        <Route path="tela-de-cursos-ativos" element={<TelaDeCursosAtivos />} />
+        <Route path="tela-de-edicao-de-cursos" element={<TelaDeEdicaoDeCursos />} />
+        <Route path="tela-hortas-ativas" element={<TelaHortasAtivas />} />
 
-        {/* Rota de cadastro de curso */}
-        <Route
-          path="tela-de-cadastro-de-curso"
-          element={<TelaDeCadastroDeCurso />}
-        />
-
-        {/* Rota de cursos ativos */}
-        <Route
-          path="tela-de-cursos-ativos"
-          element={<TelaDeCursosAtivos />}
-        />
-
-        {/* Rota de edição de cursos */}
-        <Route
-          path="tela-de-edicao-de-cursos"
-          element={<TelaDeEdicaoDeCursos />}
-        />
-
-        {/* Rota de hortas ativas */}
-        <Route
-          path="tela-hortas-ativas"
-          element={<TelaHortasAtivas />}
-        />
-
-        {/* Qualquer outro caminho volta para Home */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {/* qualquer /app/xxxx que não bata cai em /app/home */}
+        <Route path="*" element={<Navigate to="home" replace />} />
       </Route>
+
+      {/* 3) qualquer outra URL (fora / e /app) volta para "/" (Login) */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }
