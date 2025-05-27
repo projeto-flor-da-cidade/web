@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import userIcon from "../../../assets/person-circle-outline.svg";
 
 const headerMenu = [
@@ -31,7 +31,16 @@ const headerMenu = [
 
 export default function Header() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [openIndex, setOpenIndex] = useState(null);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    // 🔥 Aqui você pode limpar tokens ou qualquer estado de autenticação
+    localStorage.removeItem("token"); // se estiver usando token
+    // Redireciona para login
+    navigate("/login");
+  };
 
   return (
     <header className="fixed inset-x-0 top-0 h-16 bg-[#d9d9d9] shadow-md z-50">
@@ -101,9 +110,35 @@ export default function Header() {
             </React.Fragment>
           ))}
 
-          {/* User Icon */}
+          {/* Divider */}
           <div className="h-6 w-px bg-gray-800 mx-2 hidden sm:block" />
-          <img src={userIcon} alt="Usuário" className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0" />
+
+          {/* User Icon */}
+          <div className="relative">
+            <button
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+              className="focus:outline-none"
+            >
+              <img
+                src={userIcon}
+                alt="Usuário"
+                className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0"
+              />
+            </button>
+
+            {userMenuOpen && (
+              <ul className="absolute right-0 mt-2 w-32 sm:w-36 bg-[#d9d9d9] shadow-lg rounded-md overflow-hidden z-50">
+                <li>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-[14px] sm:text-[16px] font-open-sans font-bold text-red-700 hover:bg-[#e0e3d0]"
+                  >
+                    Sair
+                  </button>
+                </li>
+              </ul>
+            )}
+          </div>
         </nav>
       </div>
     </header>
