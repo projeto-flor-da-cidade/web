@@ -8,8 +8,7 @@ export default function TelaDeLoginAdmin() {
   const navigate = useNavigate();
 
   const handleUsuarioChange = (e) => {
-    const valor = e.target.value;
-    setUsuario(valor);
+    setUsuario(e.target.value);
   };
 
   const handleSubmit = async (e) => {
@@ -64,7 +63,6 @@ export default function TelaDeLoginAdmin() {
                 onChange={handleUsuarioChange}
                 maxLength={100}
                 className="mt-1 w-full border border-gray-300 rounded px-3 py-2 font-nunito focus:outline-none focus:ring-2 focus:ring-[#60855f]"
-                placeholder=""
               />
             </label>
 
@@ -79,6 +77,13 @@ export default function TelaDeLoginAdmin() {
             >
               Confirmar
             </button>
+
+            {/* Aqui exibimos o erro */}
+            {error && (
+              <p className="mt-2 text-center text-sm text-red-600 font-nunito">
+                {error}
+              </p>
+            )}
           </div>
 
           <div className="text-center mt-6">
