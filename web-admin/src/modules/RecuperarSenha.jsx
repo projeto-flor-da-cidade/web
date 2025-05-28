@@ -1,18 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import eyeOutline from "../assets/eye-outline.svg";
-import eyeOffOutline from "../assets/eye-off-outline.svg";
 import api from "../services/api";
 
 export default function TelaDeLoginAdmin() {
-  const [usuario, setUsuario] = useState("01458479");
-  const [senha, setSenha] = useState("");
-  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [usuario, setUsuario] = useState("usuario@email.com.br");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleUsuarioChange = (e) => {
-    const valor = e.target.value.replace(/\D/g, "").slice(0, 8);
+    const valor = e.target.value;
     setUsuario(valor);
   };
 
@@ -23,7 +19,6 @@ export default function TelaDeLoginAdmin() {
     try {
       const resp = await api.post("/login", {
         matricula: usuario,
-        senha: senha,
       });
       if (resp.status === 200) {
         navigate("/app/home", { replace: true });
@@ -57,61 +52,41 @@ export default function TelaDeLoginAdmin() {
           className="w-full flex-1 flex flex-col justify-between"
         >
           <div className="space-y-6 flex-1 flex flex-col justify-center">
+            <h1 className="text-3xl mb-8 text-center">
+              <label className="block font-montserrat">Recuperar Senha</label>
+            </h1>
+
             <label className="block font-nunito text-gray-700">
-              Usuário
+              Informe seu e-mail
               <input
                 type="text"
                 value={usuario}
                 onChange={handleUsuarioChange}
-                maxLength={8}
-                inputMode="numeric"
+                maxLength={100}
                 className="mt-1 w-full border border-gray-300 rounded px-3 py-2 font-nunito focus:outline-none focus:ring-2 focus:ring-[#60855f]"
-                placeholder="Digite 8 dígitos"
+                placeholder=""
               />
             </label>
 
             <label className="block font-nunito text-gray-700">
-              Senha
-              <div className="relative">
-                <input
-                  type={mostrarSenha ? "text" : "password"}
-                  value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
-                  className="mt-1 w-full border border-gray-300 rounded px-3 py-2 font-nunito focus:outline-none focus:ring-2 focus:ring-[#60855f] pr-10"
-                  placeholder="••••••••"
-                />
-                <button
-                  type="button"
-                  onClick={() => setMostrarSenha((v) => !v)}
-                  className="absolute top-1/2 right-3 transform -translate-y-1/2 focus:outline-none"
-                >
-                  <img
-                    src={mostrarSenha ? eyeOffOutline : eyeOutline}
-                    alt={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
-                    className="w-5 h-5"
-                  />
-                </button>
-              </div>
+              Verifique sua caixa de e-mail para realizar o procedimento de
+              recuperação de senha.
             </label>
-
-            {error && (
-              <p className="text-red-500 text-sm text-center">{error}</p>
-            )}
 
             <button
               type="submit"
               className="w-full py-3 rounded font-nunito font-semibold text-white bg-[#60855f] hover:bg-[#4e6e52] transition-colors"
             >
-              Entrar
+              Confirmar
             </button>
           </div>
 
           <div className="text-center mt-6">
             <Link
-              to="/RecuperarSenha"
-              className="font-nunito text-sm underline text-gray-600 hover:text-gray-800"
+              to="/TelaDeLoginAdmin"
+              className="font-nunito text-lg underline text-gray-600 hover:text-gray-800"
             >
-              Esqueci minha senha...
+              Voltar
             </Link>
           </div>
         </form>
