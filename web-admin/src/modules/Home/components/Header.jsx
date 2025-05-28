@@ -8,25 +8,25 @@ const headerMenu = [
   {
     label: "Serviços",
     items: [
-      { name: "Solicitações de Hortas", to: "/tela-de-solicitacao-hortas", enabled: true },
-      { name: "Cadastro de Cursos", to: "/tela-de-cadastro-de-curso", enabled: true },
+      { name: "Solicitações de Hortas", to: "/app/tela-de-solicitacao-hortas", enabled: true },
+      { name: "Cadastro de Cursos",    to: "/app/tela-de-cadastro-de-curso",    enabled: true },
     ],
   },
   {
     label: "Consultas",
     items: [
-      { name: "Hortas Ativas", to: "/tela-hortas-ativas", enabled: true },
-      { name: "Cursos Ativos", to: "/tela-de-cursos-ativos", enabled: true },
+      { name: "Hortas Ativas", to: "/app/tela-hortas-ativas", enabled: true },
+      { name: "Cursos Ativos", to: "/app/tela-de-cursos-ativos", enabled: true },
       { name: "Registros de Solicitações", to: "#", enabled: false },
-      { name: "Registros de Cursos", to: "#", enabled: false },
+      { name: "Registros de Cursos",       to: "#", enabled: false },
     ],
   },
   {
     label: "Ferramentas",
     items: [
-      { name: "Usuários", to: "#", enabled: false },
-      { name: "Configurações", to: "#", enabled: false },
-      { name: "Relatórios", to: "/tela-de-relatorios", enabled: true },
+      { name: "Usuários",      to: "#",                  enabled: false },
+      { name: "Configurações", to: "#",                  enabled: false },
+      { name: "Relatórios",    to: "/app/tela-de-relatorios", enabled: true },
     ],
   },
 ];
@@ -35,16 +35,16 @@ export default function Header() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [openIndex, setOpenIndex] = useState(null);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [openIndex, setOpenIndex]       = useState(null);
+  const [mobileOpen, setMobileOpen]     = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
-  const toggleMobile = () => setMobileOpen(!mobileOpen);
-  const toggleUserMenu = () => setUserMenuOpen(!userMenuOpen);
+  const toggleMobile   = () => setMobileOpen(o => !o);
+  const toggleUserMenu = () => setUserMenuOpen(o => !o);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/"); // volta para login
+    navigate("/"); // volta pra raiz (login)
   };
 
   return (
@@ -60,7 +60,7 @@ export default function Header() {
           </span>
         </div>
 
-        {/* Hamburger para mobile */}
+        {/* Hamburger mobile */}
         <button
           className="block sm:hidden text-gray-700 focus:outline-none"
           onClick={toggleMobile}
@@ -114,7 +114,7 @@ export default function Header() {
           {/* Divider */}
           <div className="h-6 w-px bg-gray-800 mx-2" />
 
-          {/* User Icon & Menu */}
+          {/* User menu */}
           <div className="relative">
             <button onClick={toggleUserMenu} className="focus:outline-none">
               <img src={userIcon} alt="Usuário" className="w-10 h-10" />

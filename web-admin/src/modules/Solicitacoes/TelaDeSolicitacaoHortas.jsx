@@ -97,7 +97,7 @@ export default function TelaDeSolicitacaoHortas() {
               </div>
               <button
                 onClick={() =>
-                  navigate('/tela-de-descricao-de-solicitacao-hortas', {
+                  navigate('/app/tela-de-descricao-de-solicitacao-hortas', {
                     state: { id: req.id },
                   })
                 }

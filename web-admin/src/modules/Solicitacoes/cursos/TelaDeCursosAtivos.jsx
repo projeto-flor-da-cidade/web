@@ -98,7 +98,7 @@ const TelaDeCursosAtivos = () => {
                   <div className="flex justify-between items-center">
                     <span className="text-base">Período de inscrição: {curso.period}</span>
                     <button
-                      onClick={() => navigate('/tela-de-edicao-de-cursos', { state: curso })}
+                      onClick={() => navigate('/app/tela-de-edicao-de-cursos', { state: curso })}
                       className="p-2 bg-white-800 rounded-full hover:bg-green-700 transition-colors duration-200"
                     >
                       <img src={PencilIcon} alt="Editar" className="w-6 h-6 text-white" />
