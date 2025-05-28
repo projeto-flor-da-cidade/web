@@ -8,6 +8,12 @@ import TelaDeDescricaoDeSolicitacaoHortas from './modules/Solicitacoes/TelaDeDes
 import TelaDeCadastroDeCurso from './modules/Solicitacoes/cursos/TelaDeCadastroDeCurso'
 import TelaDeCursosAtivos from './modules/Solicitacoes/cursos/TelaDeCursosAtivos'
 import TelaDeEdicaoDeCursos from './modules/Solicitacoes/cursos/TelaDeEdicaoDeCursos'
+import TelaDeRelatorios from './modules/TelaDeRelatorios'
+import CriarModeloRelatorio from './modules/SubTelasRelatorio/CriarModeloRelatorio'
+import CriarRelatorioAcolhimento from './modules/SubTelasRelatorio/CriarRelatorioAcolhimento'
+import CriarRelatorioAcompanhamento from './modules/SubTelasRelatorio/CriarRelatorioAcompanhamento'
+import EditarRelatorio from './modules/SubTelasRelatorio/EditarRelatorio'
+
 
 function Layout() {
   return (
@@ -56,6 +62,36 @@ export default function App() {
           element={<TelaDeEdicaoDeCursos />}
         />
 
+        {/* Rota de Relatorios */}
+        <Route
+          path="Tela-de-Relatorios"
+          element={<TelaDeRelatorios/>}
+        />
+
+         {/* Rota de Modelo de Relatorios */}
+        <Route
+          path="Criar-Modelo-Relatorio"
+          element={<CriarModeloRelatorio/>}
+        />
+
+           {/* Rota de Relatorios de Acolhimento */}
+        <Route
+          path="Criar-Relatorio-Acolhimento"
+          element={<CriarRelatorioAcolhimento/>}
+        />
+     
+        {/* Rota de Relatorios de Acompanhamento*/}
+        <Route
+          path="Criar-Relatorio-Acompanhamento"
+          element={<CriarRelatorioAcompanhamento/>}
+        />
+     
+      {/* Rota de edição de Relatorios*/}
+        <Route
+          path="Editar-Relatorio"
+          element={<EditarRelatorio/>}
+        />
+     
         {/* Qualquer outro caminho volta para Home */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
