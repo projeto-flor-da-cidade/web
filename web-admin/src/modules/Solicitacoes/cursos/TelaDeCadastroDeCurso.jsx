@@ -1,192 +1,202 @@
 import React, { useState } from 'react';
-import Header from '../../Home/components/Header';
-import ArrowUpCircle from '../../../assets/arrow-up-circle-outline.svg';
-import CalendarOutline from '../../../assets/calendar-outline.svg';
-import CheckmarkCircle from '../../../assets/checkmark-circle-outline.svg';
-import CloseOutline from '../../../assets/close-outline.svg';
+import axios from 'axios';
+
+// Componentes e Ícones
+import Header from '../../Home/components/Header'; // Verifique se o caminho está correto
+import { FiUpload, FiCheckCircle, FiXCircle, FiCalendar, FiLoader } from 'react-icons/fi';
+
+const API_URL = 'http://localhost:8082/api/cursos'; // Centralize a URL da API
 
 const TelaDeCadastroDeCurso = () => {
-  const [atividade, setAtividade] = useState('');
+  const [tipoAtividade, setTipoAtividade] = useState('Curso');
   const [nome, setNome] = useState('');
   const [descricao, setDescricao] = useState('');
   const [local, setLocal] = useState('');
-  const [bannerPreview, setBannerPreview] = useState(null);
   const [instituicao, setInstituicao] = useState('');
   const [publicoAlvo, setPublicoAlvo] = useState('Geral');
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
-  const [ativarAutomatico, setAtivarAutomatico] = useState(false);
+  const [dataInscInicio, setDataInscInicio] = useState('');
+  const [dataInscFim, setDataInscFim] = useState('');
+  const [turno, setTurno] = useState('Manhã');
+  const [maxPessoas, setMaxPessoas] = useState('');
+  const [cargaHoraria, setCargaHoraria] = useState('');
+  const [ativo, setAtivo] = useState(false);
+  const [bannerFile, setBannerFile] = useState(null);
+  const [bannerPreview, setBannerPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [feedback, setFeedback] = useState({ type: '', message: '' });
 
   const handleBannerChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const url = URL.createObjectURL(file);
-      setBannerPreview(url);
+      setBannerFile(file);
+      setBannerPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const resetForm = () => {
+    setTipoAtividade('Curso');
+    setNome(''); setDescricao(''); setLocal(''); setInstituicao('');
+    setPublicoAlvo('Geral'); setDataInicio(''); setDataFim('');
+    setDataInscInicio(''); setDataInscFim(''); setTurno('Manhã');
+    setMaxPessoas(''); setCargaHoraria(''); setAtivo(false);
+    setBannerFile(null); setBannerPreview(null);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setFeedback({ type: '', message: '' });
+
+    const cursoData = {
+      tipoAtividade, nome, descricao, local, instituicao, publicoAlvo,
+      dataInicio, dataFim, dataInscInicio, dataInscFim, turno,
+      maxPessoas: Number(maxPessoas) || 0,
+      cargaHoraria: Number(cargaHoraria) || 0,
+      ativo
+    };
+
+    const formData = new FormData();
+    formData.append('curso', new Blob([JSON.stringify(cursoData)], { type: 'application/json' }));
+    if (bannerFile) {
+      formData.append('banner', bannerFile);
+    }
+
+    try {
+      await axios.post(API_URL, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setFeedback({ type: 'success', message: 'Curso cadastrado com sucesso!' });
+      resetForm();
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Ocorreu um erro ao cadastrar o curso.';
+      setFeedback({ type: 'error', message: errorMessage });
+      console.error("Erro no cadastro:", error);
+    } finally {
+      setLoading(false);
+      setTimeout(() => setFeedback({ type: '', message: '' }), 5000); // Limpa o feedback após 5 segundos
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 font-poppins">
-      {/* Header fixo */}
-      <div className="sticky top-0 z-50">
-        <Header />
-      </div>
-      {/* Espaçamento abaixo do header */}
-      <main className="container mx-auto p-6 pt-20">
-        {/* Título */}
-        <h1 className="text-[39.3px] font-semibold mb-6">Cadastro de Curso</h1>
+    <div className="min-h-screen bg-gray-50 font-poppins">
+      <Header />
+      <form onSubmit={handleSubmit} className="container mx-auto p-4 md:p-6 pt-24">
+        <header className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-800">Cadastro de Curso</h1>
+          <p className="text-gray-500 mt-1">Preencha os campos abaixo para criar uma nova atividade formativa.</p>
+        </header>
 
-        {/* Tipo de atividade */}
-        <section className="mb-8">
-          <h2 className="text-[30px] font-medium mb-4">Tipo de atividade formativa:</h2>
-          <div className="flex space-x-6">
-            <label className="flex items-center space-x-2">
-              <input
-                type="radio"
-                name="atividade"
-                value="Curso"
-                checked={atividade === 'Curso'}
-                onChange={() => setAtividade('Curso')}
-              />
-              <span className="text-lg">Curso</span>
-            </label>
-            <label className="flex items-center space-x-2">
-              <input
-                type="radio"
-                name="atividade"
-                value="Oficina"
-                checked={atividade === 'Oficina'}
-                onChange={() => setAtividade('Oficina')}
-              />
-              <span className="text-lg">Oficina</span>
-            </label>
-          </div>
-        </section>
-
-        {/* Dados principais */}
-        <section className="mb-8 space-y-6">
-          <div>
-            <label className="block text-[30px] mb-2">Nome:</label>
-            <input
-              type="text"
-              value={nome}
-              onChange={e => setNome(e.target.value)}
-              className="w-full h-12 px-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
-          <div>
-            <label className="block text-[30px] mb-2">Descrição da Atividade (com ementa):</label>
-            <textarea
-              value={descricao}
-              onChange={e => setDescricao(e.target.value)}
-              className="w-full h-32 px-4 py-2 border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
-          <div>
-            <label className="block text-[30px] mb-2">Local:</label>
-            <input
-              type="text"
-              value={local}
-              onChange={e => setLocal(e.target.value)}
-              className="w-full h-12 px-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
-        </section>
-
-        {/* Banner e Instituição */}
-        <section className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-          <div>
-            <label className="block text-[30px] mb-2">Banner de apresentação:</label>
-            <div className="flex items-center space-x-4">
-              <div className="w-80 h-48 bg-white border rounded-md flex items-center justify-center overflow-hidden">
-                {bannerPreview ? (
-                  <img src={bannerPreview} alt="Banner preview" className="object-cover w-full h-full" />
-                ) : (
-                  <span className="text-gray-400">Pré-visualização</span>
-                )}
-              </div>
-              <label className="flex items-center px-4 py-2 bg-gray-300 rounded-md cursor-pointer transition-colors duration-200 hover:bg-gray-400">
-                <img src={ArrowUpCircle} alt="Selecionar" className="w-6 h-6 mr-2" />
-                <span className="text-base">Selecionar imagem</span>
-                <input type="file" accept="image/*" onChange={handleBannerChange} className="hidden" />
-              </label>
-            </div>
-          </div>
-          <div>
-            <label className="block text-[30px] mb-2">Instituição/Grupo responsável:</label>
-            <input
-              type="text"
-              value={instituicao}
-              onChange={e => setInstituicao(e.target.value)}
-              className="w-full h-12 px-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
-        </section>
-
-        {/* Público, Datas e Ativação */}
-        <section className="mb-8 space-y-6">
-          <div>
-            <label className="block text-[30px] mb-2">Público alvo:</label>
-            <select
-              value={publicoAlvo}
-              onChange={e => setPublicoAlvo(e.target.value)}
-              className="w-full h-12 px-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-            >
-              <option>Interno</option>
-              <option>Comunidade</option>
-              <option>Estudantes</option>
-              <option>Idosos</option>
-            </select>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-[30px] mb-2">Data início/fim:</label>
-              <div className="space-y-4">
-                <div className="flex items-center border rounded-md h-12 px-4">
-                  <img src={CalendarOutline} alt="Calendário" className="w-6 h-6 mr-2" />
-                  <input
-                    type="date"
-                    value={dataInicio}
-                    onChange={e => setDataInicio(e.target.value)}
-                    className="w-full border-none focus:ring-0"
-                  />
+        <main className="space-y-8">
+          <section className="p-6 bg-white rounded-lg shadow-md">
+            <h2 className="text-2xl font-semibold mb-6 text-gray-700">Informações Principais</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Atividade</label>
+                <div className="flex space-x-4 p-2 bg-gray-100 rounded-md">
+                  {['Curso', 'Oficina'].map((type) => (
+                    <label key={type} className={`flex-1 text-center py-2 rounded-md cursor-pointer transition-colors ${tipoAtividade === type ? 'bg-green-600 text-white shadow' : 'hover:bg-gray-200'}`}>
+                      <input type="radio" name="atividade" value={type} checked={tipoAtividade === type} onChange={() => setTipoAtividade(type)} className="sr-only"/>
+                      {type}
+                    </label>
+                  ))}
                 </div>
-                <div className="flex items-center border rounded-md h-12 px-4">
-                  <img src={CalendarOutline} alt="Calendário" className="w-6 h-6 mr-2" />
-                  <input
-                    type="date"
-                    value={dataFim}
-                    onChange={e => setDataFim(e.target.value)}
-                    className="w-full border-none focus:ring-0"
-                  />
+              </div>
+              <div className="md:col-span-2">
+                <label htmlFor="nome" className="block text-sm font-medium text-gray-700">Nome</label>
+                <input id="nome" type="text" value={nome} onChange={e => setNome(e.target.value)} required className="mt-1 w-full h-11 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+              </div>
+              <div className="md:col-span-2">
+                <label htmlFor="descricao" className="block text-sm font-medium text-gray-700">Descrição</label>
+                <textarea id="descricao" value={descricao} onChange={e => setDescricao(e.target.value)} required rows="5" className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md resize-y focus:outline-none focus:ring-2 focus:ring-green-500" />
+              </div>
+              <div>
+                <label htmlFor="local" className="block text-sm font-medium text-gray-700">Local</label>
+                <input id="local" type="text" value={local} onChange={e => setLocal(e.target.value)} required className="mt-1 w-full h-11 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+              </div>
+              <div>
+                <label htmlFor="instituicao" className="block text-sm font-medium text-gray-700">Instituição Responsável</label>
+                <input id="instituicao" type="text" value={instituicao} onChange={e => setInstituicao(e.target.value)} required className="mt-1 w-full h-11 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+              </div>
+            </div>
+          </section>
+
+          <section className="p-6 bg-white rounded-lg shadow-md">
+            <h2 className="text-2xl font-semibold mb-6 text-gray-700">Banner e Detalhes</h2>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Banner de Apresentação</label>
+                <div className="flex flex-col sm:flex-row items-center gap-4">
+                  <div className="w-full sm:w-64 h-40 bg-gray-200 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center overflow-hidden">
+                    {bannerPreview ? <img src={bannerPreview} alt="Preview" className="object-cover w-full h-full" /> : <span className="text-gray-500 text-sm">Pré-visualização</span>}
+                  </div>
+                  <label className="w-full sm:w-auto flex items-center justify-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md cursor-pointer transition-colors hover:bg-gray-300">
+                    <FiUpload className="w-5 h-5 mr-2" /><span>Selecionar imagem</span>
+                    <input type="file" accept="image/*" onChange={handleBannerChange} className="hidden" />
+                  </label>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                 <div>
+                  <label htmlFor="publicoAlvo" className="block text-sm font-medium text-gray-700">Público Alvo</label>
+                  <select id="publicoAlvo" value={publicoAlvo} onChange={e => setPublicoAlvo(e.target.value)} required className="mt-1 w-full h-11 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                    {['Geral', 'Interno', 'Comunidade', 'Estudantes', 'Idosos'].map(p => <option key={p} value={p}>{p}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="turno" className="block text-sm font-medium text-gray-700">Turno</label>
+                  <select id="turno" value={turno} onChange={e => setTurno(e.target.value)} required className="mt-1 w-full h-11 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                    {['Manhã', 'Tarde', 'Noite'].map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="maxPessoas" className="block text-sm font-medium text-gray-700">Nº de Vagas</label>
+                  <input id="maxPessoas" type="number" value={maxPessoas} onChange={e => setMaxPessoas(e.target.value)} required className="mt-1 w-full h-11 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+                </div>
+                <div>
+                  <label htmlFor="cargaHoraria" className="block text-sm font-medium text-gray-700">Carga Horária (h)</label>
+                  <input id="cargaHoraria" type="number" value={cargaHoraria} onChange={e => setCargaHoraria(e.target.value)} required className="mt-1 w-full h-11 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
                 </div>
               </div>
             </div>
-            <div className="flex items-center mt-8 max-w-max">
-              <input
-                type="checkbox"
-                checked={ativarAutomatico}
-                onChange={e => setAtivarAutomatico(e.target.checked)}
-                size={'large'}
-                className="mr-2"
-              />
-              <span className="text-[30px]">Criar Curso e ativá-lo automaticamente</span>
-            </div>
-          </div>
-        </section>
+          </section>
 
-        {/* Footer Buttons */}
-        <footer className="flex justify-end space-x-4">
-          <button className="flex items-center px-6 py-3 bg-[#60855f] text-white rounded-md transition-colors duration-200 hover:bg-[#4f704d] focus:outline-none focus:ring-2 focus:ring-green-500">
-            <img src={CheckmarkCircle} alt="Confirmar" className="w-6 h-6 mr-2" />
-            Confirmar
-          </button>
-          <button className="flex items-center px-6 py-3 bg-gray-300 text-gray-700 rounded-md transition-colors duration-200 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500">
-            <img src={CloseOutline} alt="Cancelar" className="w-6 h-6 mr-2" />
-            Cancelar
-          </button>
+          <section className="p-6 bg-white rounded-lg shadow-md">
+            <h2 className="text-2xl font-semibold mb-6 text-gray-700">Datas e Ativação</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[ {id: 'dataInicio', label: 'Início do Curso', value: dataInicio, setter: setDataInicio}, {id: 'dataFim', label: 'Fim do Curso', value: dataFim, setter: setDataFim}, {id: 'dataInscInicio', label: 'Início Inscrições', value: dataInscInicio, setter: setDataInscInicio}, {id: 'dataInscFim', label: 'Fim Inscrições', value: dataInscFim, setter: setDataInscFim} ].map(field => (
+                <div key={field.id} className="relative">
+                  <label htmlFor={field.id} className="block text-sm font-medium text-gray-700">{field.label}</label>
+                  <FiCalendar className="absolute top-9 left-3 w-5 h-5 text-gray-400 pointer-events-none"/>
+                  <input id={field.id} type="date" value={field.value} onChange={e => field.setter(e.target.value)} required className="mt-1 w-full h-11 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+                </div>
+              ))}
+            </div>
+            <div className="mt-6 flex items-center">
+                <input id="ativo" type="checkbox" checked={ativo} onChange={e => setAtivo(e.target.checked)} className="h-5 w-5 text-green-600 border-gray-300 rounded focus:ring-green-500" />
+                <label htmlFor="ativo" className="ml-3 block text-sm font-medium text-gray-700">Ativar curso e abrir inscrições imediatamente</label>
+            </div>
+          </section>
+        </main>
+
+        <footer className="mt-8 p-4 bg-white rounded-lg shadow-md flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="h-6">
+              {feedback.message && (
+                  <div className={`flex items-center gap-2 text-sm ${feedback.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+                      {feedback.type === 'success' ? <FiCheckCircle /> : <FiXCircle />}
+                      <span>{feedback.message}</span>
+                  </div>
+              )}
+            </div>
+            <div className="flex space-x-4 ml-auto">
+              <button type="button" onClick={resetForm} disabled={loading} className="px-6 py-2 bg-gray-200 text-gray-800 rounded-md transition-colors hover:bg-gray-300 disabled:opacity-50">Cancelar</button>
+              <button type="submit" disabled={loading} className="w-40 px-6 py-2 flex items-center justify-center bg-green-600 text-white font-semibold rounded-md transition-colors hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-green-400">
+                {loading ? <FiLoader className="animate-spin" /> : 'Confirmar'}
+              </button>
+            </div>
         </footer>
-      </main>
+      </form>
     </div>
   );
 };
