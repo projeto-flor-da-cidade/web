@@ -7,7 +7,7 @@ import axios from 'axios';
 import Header from '../../Home/components/Header';
 import { FiSearch, FiChevronDown, FiEdit3, FiLoader, FiAlertCircle } from 'react-icons/fi';
 
-const API_URL = 'http://localhost:8082/api/cursos';
+const API_URL = 'http://localhost:8080/api/cursos';
 
 // Função utilitária para formatar datas
 const formatDate = (dateString) => {
