@@ -2,7 +2,9 @@
 import React from "react";
 import { Routes, Route, Outlet, Navigate } from "react-router-dom";
 
+// A importação do Header deve estar aqui no topo, uma única vez.
 import Header from "./modules/Home/components/Header";
+
 import Home from "./modules/Home/Home";
 import TelaDeSolicitacaoHortas from "./modules/Solicitacoes/TelaDeSolicitacaoHortas";
 import TelaDeDescricaoDeSolicitacaoHortas from "./modules/Solicitacoes/TelaDeDescricaoDeSolicitacaoHortas";
@@ -20,69 +22,55 @@ import EditarRelatorio from "./modules/SubTelasRelatorio/EditarRelatorio";
 import TelaDeLoginAdmin from "./modules/TelaDeLoginAdmin";
 import RecuperarSenha from "./modules/RecuperarSenha";
 
+// O Layout Protegido usa o Header importado no topo do arquivo.
 function ProtectedLayout() {
   return (
-    <div className="flex flex-col h-screen w-full">
+    <>
       <Header />
-      <Outlet />
-    </div>
+      <main className="pt-16"> {/* Adiciona padding top para não ficar atrás do header fixo */}
+        <Outlet />
+      </main>
+    </>
   );
 }
 
 export default function App() {
   return (
     <Routes>
-      {/* 1) Raiz ("/") leva direto ao Login */}
+      {/* 1) Rotas Públicas */}
       <Route path="/" element={<TelaDeLoginAdmin />} />
-      <Route path="RecuperarSenha" element={<RecuperarSenha />} />
+      <Route path="/recuperar-senha" element={<RecuperarSenha />} />
 
-      {/* 2) Depois de logar, o usuário navega para /app/* */}
+      {/* 2) Rotas Protegidas dentro do Layout /app */}
       <Route path="/app" element={<ProtectedLayout />}>
-        {/* Redireciona /app para /app/home */}
-        <Route index element={<Navigate to="home" replace />} />
+        
+        {/* Redirecionamento para um caminho ABSOLUTO */}
+        <Route index element={<Navigate to="/app/home" replace />} />
 
-        {/* Rotas internas protegidas */}
+        {/* Rotas internas */}
         <Route path="home" element={<Home />} />
-        <Route
-          path="tela-de-solicitacao-hortas"
-          element={<TelaDeSolicitacaoHortas />}
-        />
-        <Route
-          path="tela-de-descricao-de-solicitacao-hortas"
-          element={<TelaDeDescricaoDeSolicitacaoHortas />}
-        />
-        <Route
-          path="tela-de-cadastro-de-curso"
-          element={<TelaDeCadastroDeCurso />}
-        />
+        <Route path="tela-de-solicitacao-hortas" element={<TelaDeSolicitacaoHortas />} />
+        <Route path="tela-de-descricao-de-solicitacao-hortas" element={<TelaDeDescricaoDeSolicitacaoHortas />} />
+        <Route path="tela-de-cadastro-de-curso" element={<TelaDeCadastroDeCurso />} />
         <Route path="tela-de-cursos-ativos" element={<TelaDeCursosAtivos />} />
-        <Route
-          path="tela-de-edicao-de-cursos"
-          element={<TelaDeEdicaoDeCursos />}
-        />
+        
+        {/* Rota de Edição com o parâmetro :id */}
+        <Route path="tela-de-edicao-de-cursos/:id" element={<TelaDeEdicaoDeCursos />} />
+
         <Route path="tela-hortas-ativas" element={<TelaHortasAtivas />} />
 
         {/* Rotas de relatórios */}
         <Route path="tela-de-relatorios" element={<TelaDeRelatorios />} />
-        <Route
-          path="criar-modelo-relatorio"
-          element={<CriarModeloRelatorio />}
-        />
-        <Route
-          path="criar-relatorio-acolhimento"
-          element={<CriarRelatorioAcolhimento />}
-        />
-        <Route
-          path="criar-relatorio-acompanhamento"
-          element={<CriarRelatorioAcompanhamento />}
-        />
+        <Route path="criar-modelo-relatorio" element={<CriarModeloRelatorio />} />
+        <Route path="criar-relatorio-acolhimento" element={<CriarRelatorioAcolhimento />} />
+        <Route path="criar-relatorio-acompanhamento" element={<CriarRelatorioAcompanhamento />} />
         <Route path="editar-relatorio" element={<EditarRelatorio />} />
 
-        {/* Qualquer outra rota em /app volta para /app/home */}
-        <Route path="*" element={<Navigate to="home" replace />} />
+        {/* Rota "Catch-All" com caminho ABSOLUTO */}
+        <Route path="*" element={<Navigate to="/app/home" replace />} />
       </Route>
 
-      {/* 3) Qualquer outra URL fora de "/" e "/app/*" volta para "/" (Login) */}
+      {/* 3) Fallback final: Qualquer outra URL volta para a raiz (Login) */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
