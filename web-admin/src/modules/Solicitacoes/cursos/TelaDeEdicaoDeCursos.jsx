@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import api from '../../../services/api';
+// Importe a instância do Axios E a constante BACKEND_URL do seu arquivo api.jsx
+import api, { BACKEND_URL } from '../../../services/api'; 
 
 // Ícones
 import { FiUpload, FiCheckCircle, FiXCircle, FiCalendar, FiLoader, FiAlertCircle, FiImage } from 'react-icons/fi';
@@ -21,7 +22,7 @@ const TelaDeEdicaoDeCursos = () => {
   const [formData, setFormData] = useState(null);
   const [originalCurso, setOriginalCurso] = useState(null);
   const [bannerFile, setBannerFile] = useState(null);
-  const [bannerPreview, setBannerPreview] = useState(null);
+  const [bannerPreview, setBannerPreview] = useState(null); // URL para preview (local ou do servidor)
   
   // --- ESTADOS DE CONTROLE DE UI ---
   const [loading, setLoading] = useState(true);
@@ -29,7 +30,7 @@ const TelaDeEdicaoDeCursos = () => {
   const [error, setError] = useState(null);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
 
-  // --- NOVOS ESTADOS PARA OPÇÕES DINÂMICAS ---
+  // --- ESTADOS PARA OPÇÕES DINÂMICAS ---
   const [optionsLoading, setOptionsLoading] = useState(true);
   const [formOptions, setFormOptions] = useState({
     tiposAtividade: [],
@@ -41,19 +42,16 @@ const TelaDeEdicaoDeCursos = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!id) {
-        navigate('/app/home'); // Rota de fallback
+        navigate('/app/home'); 
         return;
       }
       try {
         setLoading(true);
-
-        // Busca os dados do curso e as opções em paralelo para mais performance
         const [cursoResponse, optionsResponse] = await Promise.all([
           api.get(`/cursos/${id}`),
           api.get('/cursos/opcoes')
         ]);
 
-        // Processa os dados do curso
         const data = cursoResponse.data;
         setOriginalCurso(data);
         setFormData({
@@ -68,45 +66,60 @@ const TelaDeEdicaoDeCursos = () => {
           dataInscInicio: formatDateForInput(data.dataInscInicio),
           dataInscFim: formatDateForInput(data.dataInscFim),
           turno: data.turno || '',
-          maxPessoas: data.maxPessoas?.toString() || '',
-          cargaHoraria: data.cargaHoraria?.toString() || '',
-          ativo: data.ativo,
+          maxPessoas: data.maxPessoas?.toString() || '0', // Adicionado '0' como fallback
+          cargaHoraria: data.cargaHoraria?.toString() || '0', // Adicionado '0' como fallback
+          ativo: data.ativo ?? true, // Garante que 'ativo' seja sempre um booleano
         });
-        setBannerPreview(data.fotoBanner);
         
-        // Processa as opções do formulário
+        // --- LÓGICA DA IMAGEM ATUALIZADA ---
+        // Se houver um nome de arquivo para o banner no 'data' vindo do backend...
+        if (data.fotoBanner) {
+          // ...construa a URL completa para exibir a imagem existente.
+          // Assumindo que suas imagens são servidas em /uploads/banners/
+          setBannerPreview(`${BACKEND_URL}/uploads/banners/${data.fotoBanner}`);
+        } else {
+          // Caso contrário, defina o preview como null (sem imagem).
+          setBannerPreview(null);
+        }
+        // --- FIM DA LÓGICA DA IMAGEM ---
+        
         setFormOptions(optionsResponse.data);
-
         setError(null);
       } catch (err) {
         setError('Não foi possível carregar os dados do curso.');
-        console.error(err);
+        console.error("Erro ao buscar dados do curso:", err); // Log mais detalhado
       } finally {
         setLoading(false);
         setOptionsLoading(false);
       }
     };
     fetchData();
-  }, [id, navigate]);
+  }, [id, navigate]); // Adicionado `navigate` às dependências para boas práticas
 
   const handleChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
-    // O valor de um select booleano vem como string "true" ou "false"
     const finalValue = name === 'ativo' ? value === 'true' : (type === 'checkbox' ? checked : value);
     setFormData(prev => ({ ...prev, [name]: finalValue }));
   }, []);
 
-
   const handleBannerChange = useCallback((e) => {
     const file = e.target.files[0];
     if (file) {
-      setBannerFile(file);
-      setBannerPreview(URL.createObjectURL(file));
+      setBannerFile(file); // Armazena o arquivo para upload
+      // Cria uma URL 'blob' local para a nova imagem para o preview instantâneo.
+      // Isso sobrescreve o bannerPreview anterior (que poderia ser do servidor).
+      setBannerPreview(URL.createObjectURL(file)); 
     }
   }, []);
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
+    if (!formData) { // Checagem adicional
+        console.error("Tentativa de submissão sem formData.");
+        setFeedback({ type: 'error', message: 'Erro interno, dados do formulário não carregados.' });
+        return;
+    }
+
     setIsSubmitting(true);
     setFeedback({ type: '', message: '' });
 
@@ -116,26 +129,27 @@ const TelaDeEdicaoDeCursos = () => {
       cargaHoraria: Number(formData.cargaHoraria) || 0,
     };
     
-    // O backend já espera o objeto completo, não precisamos mais do 'originalCurso' aqui
     const submissionData = new FormData();
     submissionData.append('curso', new Blob([JSON.stringify(updatedCursoData)], { type: 'application/json' }));
-    if (bannerFile) {
+    if (bannerFile) { // Só adiciona o novo arquivo se um foi selecionado
       submissionData.append('banner', bannerFile);
     }
 
     try {
       await api.put(`/cursos/${id}`, submissionData);
       setFeedback({ type: 'success', message: 'Atividade atualizada com sucesso!' });
-      setTimeout(() => navigate('/app/tela-de-cursos-ativos'), 1500); // Redireciona para uma tela de listagem
+      setTimeout(() => navigate('/app/tela-de-cursos-ativos'), 1500);
     } catch (err) {
       setFeedback({ type: 'error', message: err.response?.data?.message || 'Falha ao salvar. Tente novamente.' });
-      console.error(err);
+      console.error("Erro ao atualizar curso:", err); // Log mais detalhado
     } finally {
       setIsSubmitting(false);
     }
-  }, [id, navigate, formData, bannerFile]);
+  }, [id, navigate, formData, bannerFile]); // Adicionado `formData` e `bannerFile` às dependências
 
   // --- RENDERIZAÇÃO ---
+  // O JSX abaixo é o seu original, que já estava funcional em termos de estrutura.
+  // As lógicas de `disabled` e `value` nos inputs dependem dos estados agora corretamente atualizados.
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] bg-gray-50">
       {loading ? (
@@ -146,7 +160,7 @@ const TelaDeEdicaoDeCursos = () => {
           <span>{error}</span>
           <button onClick={() => navigate(-1)} className="mt-4 px-4 py-2 bg-gray-200 rounded-md">Voltar</button>
         </div>
-      ) : formData && (
+      ) : formData && ( // Garante que formData não é null antes de tentar renderizar o formulário
         <>
           <div className="flex-grow overflow-y-auto p-4 sm:p-6 lg:p-8">
             <form onSubmit={handleSubmit} id="edit-curso-form" className="max-w-7xl mx-auto space-y-8">
@@ -195,7 +209,7 @@ const TelaDeEdicaoDeCursos = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-2">Banner</label>
                       <div className="flex flex-col sm:flex-row items-center gap-4">
                         <div className="w-full sm:w-64 h-40 bg-gray-200 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center overflow-hidden">
-                          {bannerPreview ? <img src={bannerPreview} alt="Preview" className="object-cover w-full h-full" /> : <div className="flex flex-col items-center text-gray-500"><FiImage className="w-8 h-8 mb-1" /><span className="text-sm">Sem banner</span></div>}
+                          {bannerPreview ? <img src={bannerPreview} alt="Preview do banner" className="object-cover w-full h-full" /> : <div className="flex flex-col items-center text-gray-500"><FiImage className="w-8 h-8 mb-1" /><span className="text-sm">Sem banner</span></div>}
                         </div>
                         <label className="w-full sm:w-auto flex items-center justify-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md cursor-pointer hover:bg-gray-300">
                           <FiUpload className="w-5 h-5 mr-2" /><span>Alterar imagem</span>
@@ -226,9 +240,9 @@ const TelaDeEdicaoDeCursos = () => {
                       </div>
                       <div className="sm:col-span-2">
                         <label htmlFor="ativo" className="block text-sm font-medium text-gray-700">Status da Atividade</label>
-                        <select id="ativo" name="ativo" value={formData.ativo} onChange={handleChange} className="mt-1 w-full h-11 px-3 border border-gray-300 rounded-md">
-                          <option value={true}>Ativo</option>
-                          <option value={false}>Desativado</option>
+                        <select id="ativo" name="ativo" value={formData.ativo.toString()} onChange={handleChange} className="mt-1 w-full h-11 px-3 border border-gray-300 rounded-md"> {/* Convertendo booleano para string para o select */}
+                          <option value="true">Ativo</option>
+                          <option value="false">Desativado</option>
                         </select>
                       </div>
                     </div>
@@ -272,7 +286,8 @@ const TelaDeEdicaoDeCursos = () => {
                 <button type="button" onClick={() => navigate(-1)} disabled={isSubmitting} className="w-full sm:w-auto px-6 py-2 bg-gray-200 text-gray-800 rounded-md transition-colors hover:bg-gray-300 disabled:opacity-50">
                   Cancelar
                 </button>
-                <button type="submit" form="edit-curso-form" disabled={isSubmitting} className="w-full sm:w-48 px-6 py-2 flex items-center justify-center bg-green-600 text-white font-semibold rounded-md transition-colors hover:bg-green-700 disabled:bg-green-400">
+                <button type="submit" form="edit-curso-form" disabled={isSubmitting || !formData} // Desabilita se estiver submetendo ou se não houver dados
+                  className="w-full sm:w-48 px-6 py-2 flex items-center justify-center bg-green-600 text-white font-semibold rounded-md transition-colors hover:bg-green-700 disabled:bg-green-400 disabled:cursor-not-allowed">
                   {isSubmitting ? <FiLoader className="animate-spin" /> : 'Salvar Alterações'}
                 </button>
               </div>
