@@ -1,6 +1,4 @@
-// src/modules/Solicitacoes/cursos/TelaDeCadastroDeCurso.jsx
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../../services/api'; 
 import { FiUpload, FiCheckCircle, FiXCircle, FiCalendar, FiLoader } from 'react-icons/fi';
@@ -8,17 +6,18 @@ import { FiUpload, FiCheckCircle, FiXCircle, FiCalendar, FiLoader } from 'react-
 const TelaDeCadastroDeCurso = () => {
   const navigate = useNavigate();
 
-  const [tipoAtividade, setTipoAtividade] = useState('Curso');
+  // --- ESTADOS DO FORMULÁRIO ---
+  const [tipoAtividade, setTipoAtividade] = useState('');
   const [nome, setNome] = useState('');
   const [descricao, setDescricao] = useState('');
   const [local, setLocal] = useState('');
   const [instituicao, setInstituicao] = useState('');
-  const [publicoAlvo, setPublicoAlvo] = useState('Geral');
+  const [publicoAlvo, setPublicoAlvo] = useState('');
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
   const [dataInscInicio, setDataInscInicio] = useState('');
   const [dataInscFim, setDataInscFim] = useState('');
-  const [turno, setTurno] = useState('Manhã');
+  const [turno, setTurno] = useState('');
   const [maxPessoas, setMaxPessoas] = useState('');
   const [cargaHoraria, setCargaHoraria] = useState('');
   const [ativo, setAtivo] = useState(false);
@@ -26,6 +25,40 @@ const TelaDeCadastroDeCurso = () => {
   const [bannerPreview, setBannerPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
+
+  // --- ESTADOS PARA OPÇÕES DINÂMICAS ---
+  const [optionsLoading, setOptionsLoading] = useState(true);
+  const [formOptions, setFormOptions] = useState({
+    tiposAtividade: [],
+    publicosAlvo: [],
+    turnos: []
+  });
+
+  // --- BUSCA AS OPÇÕES DO BACK-END QUANDO A TELA CARREGA ---
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        setOptionsLoading(true);
+        const response = await api.get('/cursos/opcoes');
+        const { tiposAtividade, publicosAlvo, turnos } = response.data;
+        
+        setFormOptions({ tiposAtividade, publicosAlvo, turnos });
+
+        // Define o valor inicial dos campos para a primeira opção da lista
+        if (tiposAtividade?.length > 0) setTipoAtividade(tiposAtividade[0]);
+        if (publicosAlvo?.length > 0) setPublicoAlvo(publicosAlvo[0]);
+        if (turnos?.length > 0) setTurno(turnos[0]);
+
+      } catch (error) {
+        console.error("Erro ao buscar opções do formulário:", error);
+        setFeedback({ type: 'error', message: 'Não foi possível carregar as opções do formulário.' });
+      } finally {
+        setOptionsLoading(false);
+      }
+    };
+
+    fetchOptions();
+  }, []); // O array vazio [] garante que este efeito rode apenas uma vez.
 
   const handleCancel = () => {
     navigate('/app/home');
@@ -40,10 +73,12 @@ const TelaDeCadastroDeCurso = () => {
   };
 
   const resetForm = () => {
-    setTipoAtividade('Curso');
+    setTipoAtividade(formOptions.tiposAtividade[0] || '');
     setNome(''); setDescricao(''); setLocal(''); setInstituicao('');
-    setPublicoAlvo('Geral'); setDataInicio(''); setDataFim('');
-    setDataInscInicio(''); setDataInscFim(''); setTurno('Manhã');
+    setPublicoAlvo(formOptions.publicosAlvo[0] || '');
+    setDataInicio(''); setDataFim('');
+    setDataInscInicio(''); setDataInscFim('');
+    setTurno(formOptions.turnos[0] || '');
     setMaxPessoas(''); setCargaHoraria(''); setAtivo(false);
     setBannerFile(null); setBannerPreview(null);
   };
@@ -73,11 +108,7 @@ const TelaDeCadastroDeCurso = () => {
   };
 
   return (
-    // ===== CORREÇÃO DEFINITIVA DO LAYOUT =====
-    // Este div agora é um contêiner flexível em coluna que ocupa a altura exata abaixo do header.
     <div className="flex flex-col h-[calc(100vh-4rem)] bg-gray-50">
-      
-      {/* 1. Área do Conteúdo Principal (que será rolável) */}
       <div className="flex-grow overflow-y-auto p-4 sm:p-6 lg:p-8">
         <form onSubmit={handleSubmit} id="curso-form" className="max-w-7xl mx-auto space-y-8">
           <header>
@@ -86,19 +117,20 @@ const TelaDeCadastroDeCurso = () => {
           </header>
           
           <main className="space-y-8">
-            {/* Todas as suas seções de <section> estão aqui dentro */}
             <section className="p-6 bg-white rounded-lg shadow-md">
               <h2 className="text-2xl font-semibold mb-6 text-gray-700">Informações Principais</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Atividade</label>
                   <div className="flex space-x-4 p-2 bg-gray-100 rounded-md">
-                    {['Curso', 'Oficina'].map((type) => (
-                      <label key={type} className={`flex-1 text-center py-2 rounded-md cursor-pointer transition-colors ${tipoAtividade === type ? 'bg-green-600 text-white shadow' : 'hover:bg-gray-200'}`}>
-                        <input type="radio" name="atividade" value={type} checked={tipoAtividade === type} onChange={() => setTipoAtividade(type)} className="sr-only"/>
-                        {type}
-                      </label>
-                    ))}
+                    {optionsLoading ? <p className="text-sm text-gray-500">Carregando...</p> : 
+                      formOptions.tiposAtividade.map((type) => (
+                        <label key={type} className={`flex-1 text-center py-2 rounded-md cursor-pointer transition-colors ${tipoAtividade === type ? 'bg-green-600 text-white shadow' : 'hover:bg-gray-200'}`}>
+                          <input type="radio" name="atividade" value={type} checked={tipoAtividade === type} onChange={() => setTipoAtividade(type)} className="sr-only"/>
+                          {type}
+                        </label>
+                      ))
+                    }
                   </div>
                 </div>
                 <div className="md:col-span-2">
@@ -138,14 +170,14 @@ const TelaDeCadastroDeCurso = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                    <div>
                     <label htmlFor="publicoAlvo" className="block text-sm font-medium text-gray-700">Público Alvo</label>
-                    <select id="publicoAlvo" value={publicoAlvo} onChange={e => setPublicoAlvo(e.target.value)} required className="mt-1 w-full h-11 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-                      {['Geral', 'Interno', 'Comunidade', 'Estudantes', 'Idosos'].map(p => <option key={p} value={p}>{p}</option>)}
+                    <select id="publicoAlvo" value={publicoAlvo} onChange={e => setPublicoAlvo(e.target.value)} required disabled={optionsLoading} className="mt-1 w-full h-11 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-100">
+                      {formOptions.publicosAlvo.map(p => <option key={p} value={p}>{p}</option>)}
                     </select>
                   </div>
                   <div>
                     <label htmlFor="turno" className="block text-sm font-medium text-gray-700">Turno</label>
-                    <select id="turno" value={turno} onChange={e => setTurno(e.target.value)} required className="mt-1 w-full h-11 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-                      {['Manhã', 'Tarde', 'Noite'].map(t => <option key={t} value={t}>{t}</option>)}
+                    <select id="turno" value={turno} onChange={e => setTurno(e.target.value)} required disabled={optionsLoading} className="mt-1 w-full h-11 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-100">
+                      {formOptions.turnos.map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
                   </div>
                   <div>
@@ -180,7 +212,6 @@ const TelaDeCadastroDeCurso = () => {
         </form>
       </div>
 
-      {/* 2. Footer de Ações (Fixo na parte inferior) */}
       <footer className="flex-shrink-0 bg-white shadow-top p-4">
         <div className="max-w-7xl mx-auto flex flex-col-reverse sm:flex-row justify-between items-center gap-4">
           <div className="h-6">

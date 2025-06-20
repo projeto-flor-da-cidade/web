@@ -1,80 +1,101 @@
-// src/modules/Solicitacoes/cursos/TelaDeEdicaoDeCursos.jsx
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import api from '../../../services/api'; // USANDO A INSTÂNCIA CENTRALIZADA
+import api from '../../../services/api';
 
 // Ícones
 import { FiUpload, FiCheckCircle, FiXCircle, FiCalendar, FiLoader, FiAlertCircle, FiImage } from 'react-icons/fi';
 
-// Função utilitária para formatar a data para o input (YYYY-MM-DD)
+// Função utilitária para formatar a data
 const formatDateForInput = (dateString) => {
   if (!dateString) return '';
   const date = new Date(dateString);
-  // Ajuste para UTC para evitar problemas de fuso horário que mudam o dia
   const utcDate = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
   return utcDate.toISOString().split('T')[0];
 };
-
 
 const TelaDeEdicaoDeCursos = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState(null); // Iniciar como null para saber quando os dados chegaram
+  // --- ESTADOS DO FORMULÁRIO E DADOS ---
+  const [formData, setFormData] = useState(null);
   const [originalCurso, setOriginalCurso] = useState(null);
   const [bannerFile, setBannerFile] = useState(null);
   const [bannerPreview, setBannerPreview] = useState(null);
   
+  // --- ESTADOS DE CONTROLE DE UI ---
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
 
+  // --- NOVOS ESTADOS PARA OPÇÕES DINÂMICAS ---
+  const [optionsLoading, setOptionsLoading] = useState(true);
+  const [formOptions, setFormOptions] = useState({
+    tiposAtividade: [],
+    publicosAlvo: [],
+    turnos: []
+  });
+
+  // --- EFEITO PARA BUSCAR DADOS DO CURSO E OPÇÕES DO FORMULÁRIO ---
   useEffect(() => {
-    const fetchCurso = async () => {
+    const fetchData = async () => {
       if (!id) {
-        navigate('/app/tela-de-cursos-ativos'); // Rota de fallback
+        navigate('/app/home'); // Rota de fallback
         return;
       }
       try {
         setLoading(true);
-        const response = await api.get(`/cursos/${id}`); // Usando a instância api
-        const data = response.data;
-        
+
+        // Busca os dados do curso e as opções em paralelo para mais performance
+        const [cursoResponse, optionsResponse] = await Promise.all([
+          api.get(`/cursos/${id}`),
+          api.get('/cursos/opcoes')
+        ]);
+
+        // Processa os dados do curso
+        const data = cursoResponse.data;
         setOriginalCurso(data);
         setFormData({
           nome: data.nome || '',
-          tipoAtividade: data.tipoAtividade || 'Curso',
+          tipoAtividade: data.tipoAtividade || '',
           descricao: data.descricao || '',
           local: data.local || '',
           instituicao: data.instituicao || '',
-          publicoAlvo: data.publicoAlvo || 'Geral',
+          publicoAlvo: data.publicoAlvo || '',
           dataInicio: formatDateForInput(data.dataInicio),
           dataFim: formatDateForInput(data.dataFim),
           dataInscInicio: formatDateForInput(data.dataInscInicio),
           dataInscFim: formatDateForInput(data.dataInscFim),
-          turno: data.turno || 'Manhã',
+          turno: data.turno || '',
           maxPessoas: data.maxPessoas?.toString() || '',
           cargaHoraria: data.cargaHoraria?.toString() || '',
           ativo: data.ativo,
         });
         setBannerPreview(data.fotoBanner);
+        
+        // Processa as opções do formulário
+        setFormOptions(optionsResponse.data);
+
         setError(null);
       } catch (err) {
         setError('Não foi possível carregar os dados do curso.');
         console.error(err);
       } finally {
         setLoading(false);
+        setOptionsLoading(false);
       }
     };
-    fetchCurso();
+    fetchData();
   }, [id, navigate]);
 
   const handleChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+    // O valor de um select booleano vem como string "true" ou "false"
+    const finalValue = name === 'ativo' ? value === 'true' : (type === 'checkbox' ? checked : value);
+    setFormData(prev => ({ ...prev, [name]: finalValue }));
   }, []);
+
 
   const handleBannerChange = useCallback((e) => {
     const file = e.target.files[0];
@@ -90,12 +111,12 @@ const TelaDeEdicaoDeCursos = () => {
     setFeedback({ type: '', message: '' });
 
     const updatedCursoData = {
-      ...originalCurso, ...formData,
+      ...formData,
       maxPessoas: Number(formData.maxPessoas) || 0,
       cargaHoraria: Number(formData.cargaHoraria) || 0,
-      ativo: formData.ativo === 'true' || formData.ativo === true, // Normaliza o valor booleano
     };
-
+    
+    // O backend já espera o objeto completo, não precisamos mais do 'originalCurso' aqui
     const submissionData = new FormData();
     submissionData.append('curso', new Blob([JSON.stringify(updatedCursoData)], { type: 'application/json' }));
     if (bannerFile) {
@@ -103,18 +124,18 @@ const TelaDeEdicaoDeCursos = () => {
     }
 
     try {
-      await api.put(`/cursos/${id}`, submissionData); // Usando a instância api
+      await api.put(`/cursos/${id}`, submissionData);
       setFeedback({ type: 'success', message: 'Atividade atualizada com sucesso!' });
-      setTimeout(() => navigate('/app/tela-de-cursos-ativos'), 1500);
+      setTimeout(() => navigate('/app/tela-de-cursos-ativos'), 1500); // Redireciona para uma tela de listagem
     } catch (err) {
-      setFeedback({ type: 'error', message: 'Falha ao salvar. Tente novamente.' });
+      setFeedback({ type: 'error', message: err.response?.data?.message || 'Falha ao salvar. Tente novamente.' });
       console.error(err);
     } finally {
       setIsSubmitting(false);
     }
-  }, [id, navigate, originalCurso, formData, bannerFile]);
+  }, [id, navigate, formData, bannerFile]);
 
-  // Renderização condicional integrada ao layout
+  // --- RENDERIZAÇÃO ---
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] bg-gray-50">
       {loading ? (
@@ -127,7 +148,6 @@ const TelaDeEdicaoDeCursos = () => {
         </div>
       ) : formData && (
         <>
-          {/* 1. Área do Conteúdo Principal (Rolável) */}
           <div className="flex-grow overflow-y-auto p-4 sm:p-6 lg:p-8">
             <form onSubmit={handleSubmit} id="edit-curso-form" className="max-w-7xl mx-auto space-y-8">
               <header>
@@ -136,14 +156,13 @@ const TelaDeEdicaoDeCursos = () => {
               </header>
               
               <main className="space-y-8">
-                {/* Seções do formulário (sem alterações, já estão bem estruturadas) */}
                 <section className="p-6 bg-white rounded-lg shadow-md">
                   <h2 className="text-2xl font-semibold mb-6 text-gray-700">Informações Principais</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Atividade</label>
                           <div className="flex space-x-4 p-2 bg-gray-100 rounded-md">
-                          {['Curso', 'Oficina'].map((type) => (
+                          {optionsLoading ? <p>Carregando...</p> : formOptions.tiposAtividade.map((type) => (
                               <label key={type} className={`flex-1 text-center py-2 rounded-md cursor-pointer transition-colors ${formData.tipoAtividade === type ? 'bg-green-600 text-white shadow' : 'hover:bg-gray-200'}`}>
                               <input type="radio" name="tipoAtividade" value={type} checked={formData.tipoAtividade === type} onChange={handleChange} className="sr-only"/>
                               {type}
@@ -187,14 +206,14 @@ const TelaDeEdicaoDeCursos = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                       <div>
                         <label htmlFor="publicoAlvo" className="block text-sm font-medium text-gray-700">Público Alvo</label>
-                        <select id="publicoAlvo" name="publicoAlvo" value={formData.publicoAlvo} onChange={handleChange} required className="mt-1 w-full h-11 px-3 border border-gray-300 rounded-md">
-                          {['Geral', 'Interno', 'Comunidade', 'Estudantes', 'Idosos'].map(p => <option key={p} value={p}>{p}</option>)}
+                        <select id="publicoAlvo" name="publicoAlvo" value={formData.publicoAlvo} onChange={handleChange} required disabled={optionsLoading} className="mt-1 w-full h-11 px-3 border border-gray-300 rounded-md disabled:bg-gray-100">
+                          {formOptions.publicosAlvo.map(p => <option key={p} value={p}>{p}</option>)}
                         </select>
                       </div>
                       <div>
                         <label htmlFor="turno" className="block text-sm font-medium text-gray-700">Turno</label>
-                        <select id="turno" name="turno" value={formData.turno} onChange={handleChange} required className="mt-1 w-full h-11 px-3 border border-gray-300 rounded-md">
-                          {['Manhã', 'Tarde', 'Noite'].map(t => <option key={t} value={t}>{t}</option>)}
+                        <select id="turno" name="turno" value={formData.turno} onChange={handleChange} required disabled={optionsLoading} className="mt-1 w-full h-11 px-3 border border-gray-300 rounded-md disabled:bg-gray-100">
+                          {formOptions.turnos.map(t => <option key={t} value={t}>{t}</option>)}
                         </select>
                       </div>
                       <div>
@@ -239,8 +258,6 @@ const TelaDeEdicaoDeCursos = () => {
               </main>
             </form>
           </div>
-          
-          {/* 2. Footer de Ações (Fixo) */}
           <footer className="flex-shrink-0 bg-white shadow-top p-4">
             <div className="max-w-7xl mx-auto flex flex-col-reverse sm:flex-row justify-between items-center gap-4">
               <div className="h-6">

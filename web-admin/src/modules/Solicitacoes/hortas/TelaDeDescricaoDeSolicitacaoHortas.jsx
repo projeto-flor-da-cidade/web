@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import img1 from '../../assets/horta_arnaldo.jpg';
-import img2 from '../../assets/horta2.jpg';
-import img3 from '../../assets/horta3.jpg';
-import calendarIcon from '../../assets/calendar-outline.svg';
-import checkIcon from '../../assets/checkmark-circle-outline.svg';
-import closeIcon from '../../assets/close-outline.svg';
-import searchIcon from '../../assets/search-circle-outline.svg';
+import img1 from '../../../assets/horta_arnaldo.jpg';
+import img2 from '../../../assets/horta2.jpg';
+import img3 from '../../../assets/horta3.jpg';
+import calendarIcon from '../../../assets/calendar-outline.svg';
+import checkIcon from '../../../assets/checkmark-circle-outline.svg';
+import closeIcon from '../../../assets/close-outline.svg';
+import searchIcon from '../../../assets/search-circle-outline.svg';
 
 export default function TelaDeDescricaoDeSolicitacaoHortas() {
   const images = [img1, img2, img3];

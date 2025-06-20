@@ -8,8 +8,8 @@ import Header from "./modules/Home/components/Header";
 
 // --- Páginas da Aplicação ---
 import Home from "./modules/Home/Home";
-import TelaDeSolicitacaoHortas from "./modules/Solicitacoes/TelaDeSolicitacaoHortas";
-import TelaDeDescricaoDeSolicitacaoHortas from "./modules/Solicitacoes/TelaDeDescricaoDeSolicitacaoHortas";
+import TelaDeSolicitacaoHortas from "./modules/Solicitacoes/hortas/TelaDeSolicitacaoHortas";
+import TelaDeDescricaoDeSolicitacaoHortas from "./modules/Solicitacoes/hortas/TelaDeDescricaoDeSolicitacaoHortas";
 import TelaDeCadastroDeCurso from "./modules/Solicitacoes/cursos/TelaDeCadastroDeCurso";
 import TelaDeCursosAtivos from "./modules/Solicitacoes/cursos/TelaDeCursosAtivos";
 import TelaDeEdicaoDeCursos from "./modules/Solicitacoes/cursos/TelaDeEdicaoDeCursos";
