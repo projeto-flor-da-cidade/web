@@ -1,3 +1,5 @@
+// App.jsx
+
 import React from "react";
 import { Routes, Route, Outlet, Navigate } from "react-router-dom";
 
@@ -18,6 +20,7 @@ import TelaHortasAtivas from "./modules/Solicitacoes/hortas/TelaHortasAtivas";
 import TelaDeCadastroDeCurso from "./modules/Solicitacoes/cursos/TelaDeCadastroDeCurso";
 import TelaDeCursosAtivos from "./modules/Solicitacoes/cursos/TelaDeCursosAtivos";
 import TelaDeEdicaoDeCursos from "./modules/Solicitacoes/cursos/TelaDeEdicaoDeCursos";
+import TelaDeInscritos from "./modules/Solicitacoes/cursos/TelaDeInscritos";
 
 import TelaDeRelatorios from "./modules/relatorios/TelaDeRelatorios";
 import CriarModeloRelatorio from "./modules/relatorios/SubTelasRelatorio/CriarModeloRelatorio";
@@ -25,14 +28,14 @@ import CriarRelatorioAcolhimento from "./modules/relatorios/SubTelasRelatorio/Cr
 import CriarRelatorioAcompanhamento from "./modules/relatorios/SubTelasRelatorio/CriarRelatorioAcompanhamento";
 import EditarRelatorio from "./modules/relatorios/SubTelasRelatorio/EditarRelatorio";
 
-import TelaCadastroTecnico from "./modules/tecnico/TelaCadastroTecnico"; // Verifique este caminho
+import TelaCadastroTecnico from "./modules/tecnico/TelaCadastroTecnico";
 
 // Layout para rotas protegidas
 function ProtectedLayout() {
   return (
     <>
-      <Header />
-      <main className="pt-16"> {/* Ajuste 'pt-16' conforme a altura real do seu Header */}
+      <Header /> {/* Mantém o Header aqui */}
+      <main className="pt-16"> {/* Mantém o padding-top para o Header */}
         <Outlet />
       </main>
     </>
@@ -47,9 +50,9 @@ export default function App() {
       <Route path="/recuperar-senha" element={<RecuperarSenha />} />
       
       {/* Rotas Protegidas */}
-      <Route element={<PrivateRoute />}> {/* Protege todas as rotas aninhadas aqui */}
+      <Route element={<PrivateRoute />}>
         <Route path="/app" element={<ProtectedLayout />}>
-          <Route index element={<Navigate to="home" replace />} /> {/* Redireciona /app para /app/home */}
+          <Route index element={<Navigate to="home" replace />} />
           
           <Route path="home" element={<Home />} />
           
@@ -57,33 +60,28 @@ export default function App() {
           <Route path="tela-de-solicitacao-hortas" element={<TelaDeSolicitacaoHortas />} />
           <Route path="tela-de-descricao-de-solicitacao-hortas/:id" element={<TelaDeDescricaoDeSolicitacaoHortas />} />
           <Route path="tela-hortas-ativas" element={<TelaHortasAtivas />} /> 
-          <Route path="hortas-editar/:id" element={<TelaEdicaoHorta />} /> {/* Padronizado */}
+          <Route path="hortas-editar/:id" element={<TelaEdicaoHorta />} />
 
           {/* Rotas de Cursos */}
           <Route path="tela-de-cadastro-de-curso" element={<TelaDeCadastroDeCurso />} />
           <Route path="tela-de-cursos-ativos" element={<TelaDeCursosAtivos />} />
           <Route path="tela-de-edicao-de-cursos/:id" element={<TelaDeEdicaoDeCursos />} />
+          <Route path="tela-de-inscritos/:courseId" element={<TelaDeInscritos />} /> 
           
           {/* Rotas de Relatórios */}
           <Route path="tela-de-relatorios" element={<TelaDeRelatorios />} />
           <Route path="criar-modelo-relatorio" element={<CriarModeloRelatorio />} />
           <Route path="criar-relatorio-acolhimento" element={<CriarRelatorioAcolhimento />} />
           <Route path="criar-relatorio-acompanhamento" element={<CriarRelatorioAcompanhamento />} />
-          {/* Se relatórios têm ID para edição, a rota seria "editar-relatorio/:id" */}
-          <Route path="editar-relatorio/:id" element={<EditarRelatorio />} /> {/* Exemplo com ID */} 
+          <Route path="editar-relatorio/:id" element={<EditarRelatorio />} /> 
           
           {/* Rotas de Técnico */}
           <Route path="tela-de-cadastro-tecnico" element={<TelaCadastroTecnico />} />
-          {/* Adicionar aqui rotas para listar/editar técnicos se necessário */}
-          {/* Ex: <Route path="gerenciamento-tecnicos" element={<TelaGerenciamentoTecnicos />} /> */}
-          {/* Ex: <Route path="tecnicos/editar/:id" element={<TelaEdicaoTecnico />} /> */}
 
-          {/* Fallback para qualquer rota não encontrada dentro de /app, redireciona para /app/home */}
           <Route path="*" element={<Navigate to="home" replace />} /> 
         </Route>
       </Route>
       
-      {/* Fallback global para qualquer rota não encontrada, redireciona para a tela de login */}
       <Route path="*" element={<Navigate to="/" replace />} /> 
     </Routes>
   );

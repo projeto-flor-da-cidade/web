@@ -326,7 +326,7 @@ export default function TelaDeCursosAtivos() {
                         > <FiEdit3 className="w-4 h-4" /> Editar
                         </Link>
                         <button
-                          onClick={(e) => { e.stopPropagation(); navigate(`/app/cursos/detalhes/${curso.idCurso}`); }} 
+                          onClick={(e) => { e.stopPropagation(); navigate(`/app/tela-de-inscritos/${curso.idCurso}`); }} 
                           className="flex w-full sm:w-auto items-center justify-center gap-2 px-3 py-1.5 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 ring-offset-1 focus:ring-gray-500 transition-colors text-xs font-medium"
                         > <FiEye className="w-4 h-4" /> Ver Detalhes
                         </button>
